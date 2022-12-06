@@ -1,0 +1,111 @@
+{% extends 'apps/parts/base.html' %}
+{% block main_content %}
+    {% load static %}
+    <div id="content">
+        <div class="post">
+            <div class="container">
+                <div class="post-standard">
+                    <div class="post-standard__banner">
+                        <div class="post-standard__banner__image">
+                            <img src="{{ post.pic.url }}" alt="Post banner image"/>
+                        </div>
+                        <div class="post-standard__banner__content">
+                            <div class="post-card -center">
+                                <div></div>
+                                <div class="card__content">
+                                    <h5 class="card__content-category">{{ post.category.first.name }}</h5>
+                                    <a class="card__content-title"
+                                       href="{% url 'post_form_detail' post.slug %}">{{ post.title }}</a>
+                                    <div class="card__content-info">
+                                        <div class="info__time">
+                                            <i class="far fa-clock"></i>
+                                            <p>Clock {{ post.created_at|date:'D d, Y' }}</p>
+                                        </div>
+                                        <div class="info__comment">
+                                            <i class="far fa-comment"></i>
+                                            <p>{{ post.comment_count }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-14 col-md-12 mx-auto">
+                            <div class="post-standard__content">
+                                <p>{{ post.content|safe }}</p>
+
+                                <div class="post-footer">
+                                    <div class="post-footer__tags center">
+                                        <div class="tags-group">
+                                            {% for category in post_categories %}
+                                                <a class="tag-btn"
+                                                   href="{% url 'category' %}?category={{ category.slug }}">{{ category.name }}</a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% if post.author %}
+{#                                        <h5>{{ post.author.first_name }}</h5>#}
+{#                                        <p>{{ post.author.bio }}</p>#}
+                                        <div class="post-footer__author">
+                                            <div class="author__avatar">
+                                                <!-- img size 150 x 150 -->
+                                                <img src="{{ post.author.avatar.url }}" alt="Author avatar"/>
+                                            </div>
+                                            <!-- Author Info -->
+                                            <div class="author__info">
+                                                <h5>{{ post.author.first_name }}</h5>
+                                                <p>{{ post.author.bio }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <!-- comments  -->
+                                    {% if post.comment_count %}
+                                        <div class="post-footer__comment">
+                                            <h3 class="comment-title"><span>{{ post.comment_count }} comment</span></h3>
+                                            <div class="post-footer__comment__detail">
+                                                {% for comment in comments %}
+                                                    <div class="comment__item">
+                                                        <div class="comment__item__avatar">
+                                                            <img src="{% static 'apps/assets/images/post_detail/auth.png' %}"
+                                                                 alt="Author avatar"/>
+                                                        </div>
+                                                        <div class="comment__item__content">
+                                                            <div class="comment__item__content__header">
+                                                                <h5>{{ comment.author.get_full_name }}</h5>
+                                                                <div class="data">
+                                                                    <p>
+                                                                        <i class="far fa-clock"></i>{{ comment.created_at|date:"D m, Y" }}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <p>{{ comment.text }}</p>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if user.is_authenticated %}
+                                        <h3 class="comment-title">
+                                            <span>Leave a comment</span>
+                                        </h3>
+                                        <div class="post-footer__comment__form">
+                                            <form action="{% url 'post_form_detail' post.slug %}" method="post">
+                                                {% csrf_token %}
+                                                <textarea rows="5" placeholder="Message" name="text"></textarea>
+                                                <div class="center">
+                                                    <button class="btn btn-primary">Submit</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

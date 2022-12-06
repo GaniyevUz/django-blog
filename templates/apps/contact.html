@@ -1,0 +1,78 @@
+{% extends 'apps/parts/base.html' %}
+{% load static %}
+
+{% block main_content %}
+
+    <div class="container">
+        <div class="breadcrumb">
+            <ul>
+                <li><a href="{% url 'index' %}"> <i class="fas fa-home"></i>Home</a></li>
+                <li class="active"><a href="{% url 'contact' %}">Contact us</a></li>
+            </ul>
+        </div>
+        <div class="contact-us">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="contact-us__info">
+                        <h3 class="contact-title">GET IN TOUCH</h3>
+                        <p class="contact-description">{{ about.about|truncatechars:300 }}</p>
+                        <div class="contact-method">
+                            <div class="contact-method__item"><i class="fas fa-map-marker-alt"></i>
+                                <p>{{ about.location }}</p>
+                            </div>
+                            <div class="contact-method__item"><i class="fas fa-mobile-alt"></i>
+                                <p>{{ about.phone }}</p>
+                            </div>
+                            <div class="contact-method__item"><i class="far fa-envelope-open"></i>
+                                <p>{{ about.email }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% if about.social_accounts %}
+                        <div class="contact-us__social">
+                            <h3 class="contact-title">GET IN TOUCH</h3>
+                            <div class="social-block">
+                                {% for account, url in about.social_accounts.items %}
+                                    <a href="{{ url }}" target="_blank"><i class="fab fa-{{ account }}"></i></a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="contact-us__form">
+                        <h3 class="contact-title">LEAVE A MESSAGE</h3>
+                        <form action="{% url 'contact' %}" method="post">
+                            {% csrf_token %}
+                            <input type="text" placeholder="Name" name="name"/>
+                            <input type="email" placeholder="Email" name="email"/>
+                            <input type="text" placeholder="Subject" name="subject"/>
+                            <textarea name="message" cols="30" rows="8" placeholder="Message"></textarea>
+                            <button type="submit" class="btn -normal">Send message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="subcribe-bar">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="subcribe-bar__content">
+                        <h5>Don’t miss our future updates!</h5>
+                        <h3>Get Subscribe today!</h3>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <form class="subcribe-bar__form" action="/">
+                        <input type="text" placeholder="You email"/>
+                        <button class="btn -normal">Subcribe</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+  

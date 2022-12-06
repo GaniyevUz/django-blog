@@ -1,0 +1,9 @@
+{% extends 'admin/submit_line.html' %}
+
+{% block submit-row %}
+    <p class="deletelink-box" style="margin-right: 20px">
+        <input type="submit" style="background-color: #96be5b;" value="active" name="status">
+    </p>
+    <input type="submit" style="background-color: #4bb086;" value="View Post" name="view">
+    {{ block.super }}
+{% endblock %}

@@ -1,0 +1,57 @@
+{% load static %}
+<header class="theme-default">
+    <div id="search-box">
+        <div class="container">
+            <form action="/" method="POST">
+                <label>
+                    <input type="text" placeholder="Searching for news" name="search"/>
+                </label>
+                <button><i class="fas fa-arrow-right"></i></button>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header-wrapper">
+            <a class="header__logo" href="{% url 'index' %}"><img src="{% static 'apps/assets/images/logo1.png' %}"
+                                                                  alt="Logo"/></a>
+            <nav>
+                <ul>
+                    <li class="nav-item {% if request.path == '/' %}active{% endif %}"><a
+                            href="{% url 'index' %}">Home</a></li>
+                    <li class="nav-item {% if request.path == '/category' %}active{% endif %}"><a
+                            href="{% url 'category' %}">Blog</a>
+                        <!-- Blog category drop down -->
+                        <!-- <ul class="dropdown-menu">
+                          <li><a href="#">BLOG CATEGORY 1</a></li>
+                          <li><a href="#">BLOG CATEGORY 2</a></li>
+                          <li><a href="#">BLOG CATEGORY 3</a></li>
+                        </ul> -->
+                    </li>
+                    <li class="nav-item {% if request.path == '/about' %}active{% endif %}"><a href="{% url 'about' %}">About</a>
+                    </li>
+                    <li class="nav-item {% if request.path == '/contact' %}active{% endif %}"><a
+                            href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+            </nav>
+            <!-- Social Icons -->
+            <div class="header__icon-group"><a href="#" id="search"><i class="fas fa-search"></i></a>
+                <div class="social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-dribbble"></i></a>
+                    <a id="mobile-menu-controller" href="#"><i class="fas fa-bars"></i></a>
+                </div>
+            </div>
+            {% if user.is_anonymous %}
+                <a class="btn btn-outline-primary" href="{% url 'register' %}">Sign up</a>
+                <a class="btn btn-outline-primary" href="{% url 'login' %}">Log in</a>
+            {% else %}
+                <a class="btn btn-outline-info" href="{% url 'preview_author_posts' %}">My Blogs</a>
+                <a class="btn btn-outline-secondary" href="{% url 'create_post' %}">Add Post</a>
+                <a class="btn btn-outline-secondary" href="{% url 'profile' %}">{{ user.username }}</a>
+                <a class="btn btn-outline-primary" href="{% url 'logout' %}">Log out</a>
+            {% endif %}
+        </div>
+    </div>
+</header>

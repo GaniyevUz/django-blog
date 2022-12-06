@@ -1,0 +1,5 @@
+<form action="{{ url }}" method="post">
+    {% csrf_token %}
+        <input type="submit" style="background-color: #96be5b;" value="active" name="status">
+        <input type="submit" style="background-color: #de8652;" value="cancel" name="status">
+</form>

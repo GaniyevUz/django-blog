@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+
+    {% include 'apps/parts/css.html' %}
+</head>
+<body>
+<div id="load">
+    <div class="load__content">
+        <div class="load__icon"><img src="{% static 'apps/assets/images/icons/load.gif' %}" alt="Loading icon"/></div>
+    </div>
+</div>
+
+{% include 'apps/parts/header.html' %}
+<!-- Main Section starts here -->
+<div id="content">
+    {% block main_content %}{% endblock %}
+</div>
+
+{% include 'apps/parts/footer.html' %}
+{% include 'apps/parts/javascript.html' %}
+
+</body>
+</html>

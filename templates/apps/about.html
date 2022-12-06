@@ -1,0 +1,62 @@
+{% extends 'apps/parts/base.html' %}
+{% block main_content %}
+    {% load static %}
+
+
+    <div class="container">
+        <div class="breadcrumb">
+            <ul>
+                <li>
+                    <a href="{% url 'index' %}"> <i class="fas fa-home"></i>Home</a>
+                </li>
+                <li class="active">
+                    <a href="#">About</a>
+                </li>
+            </ul>
+        </div>
+        <div class="about-us">
+            <div class="row align-items-center">
+                <div class="col-12 col-sm-8 col-md-6 mx-auto">
+                    <div class="about-us__image">
+                        <img src="{{ about.image.url }}" alt="About us image"/>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="about-us__content">
+                        <h3>Thank you for visit out my website.</h3>
+                        <p>{{ about.about }}</p>
+                        <div class="follow">
+                            {% if about.social_accounts %}
+                                <p>Follow us:</p>
+                                <div class="social-block">
+                                    {% for account, url in about.social_accounts.items %}
+                                        <a href="{{ url }}" target="_blank"><i class="fab fa-{{ account }}"></i></a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="subcribe-bar">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="subcribe-bar__content">
+                        <h5>Don’t miss our future updates!</h5>
+                        <h3>Get Subscribe today!</h3>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <form class="subcribe-bar__form" action="/">
+                        <input type="text" placeholder="You email"/>
+                        <button class="btn -normal">Subcribe</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

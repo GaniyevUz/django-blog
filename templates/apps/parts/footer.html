@@ -1,0 +1,82 @@
+{% load static %}
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="row">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="footer-col -about">
+                        <div class="center-line-title">
+                            <h5>About us</h5>
+                        </div>
+                        <p>{{ about|truncatechars:150 }}</p>
+                        <div class="contact-method">
+                            <p><i class="fas fa-map-marker-alt"></i>{{ about.location }}</p>
+                            <p><i class="far fa-mobile-android"></i>{{ about.phone }}</p>
+                            <p><i class="far fa-envelope-open"></i>{{ about.email }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="footer-col -feature-post">
+                        <div class="center-line-title">
+                            <h5>Feature posts</h5>
+                        </div>
+                        <div class="feature-post-block">
+                            {% for feature_post in feature_posts %}
+                                <div class="post-card -tiny">
+                                    <a class="card__cover" href="{% url 'post_form_detail' feature_post.slug %}">
+                                        <!-- img size 360 x 360 -->
+                                        <img src="{{ feature_post.pic.url }}" alt="{{ feature_post.title }}"/>
+                                    </a>
+                                    <div class="card__content">
+                                        <h5 class="card__content-category">{{ feature_post.category.name }}</h5>
+                                        <a class="card__content-title"
+                                           href="{% url 'post_form_detail' feature_post.slug %}">{{ feature_post.title }}</a>
+                                        <div class="card__content-info">
+                                            <div class="info__time"><i class="far fa-clock"></i>
+                                                <p>{{ feature_post.created_at }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-12 col-lg-4">
+                    <div class="footer-col -util">
+                        <div class="row">
+                            <!-- Blog Tags -->
+                            <div class="col-12 col-md-6 col-lg-12">
+                                <div class="center-line-title">
+                                    <h5>Blog Tags</h5>
+                                </div>
+                                {% for tag in tags %}
+                                    <a class="tag-btn"
+                                       href="{% url 'category' %}?category={{ tag.slug }}">{{ tag.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- Social Media -->
+                        <div class="col-12 col-md-6 col-lg-12">
+                            {% if about.social_accounts %}
+                                <div class="center-line-title">
+                                    <h5>Follow us</h5>
+                                </div>
+                                <div class="social-block">
+                                    {% for account, url in about.social_accounts.items %}
+                                        <a href="{{ url }}" target="_blank"><i class="fab fa-{{ account }}"></i></a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copyright">
+        <p>© 2023, Fuse - All rights reserved.</p>
+    </div>
+    </div>
+</footer>

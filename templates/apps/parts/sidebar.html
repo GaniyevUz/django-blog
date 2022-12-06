@@ -1,0 +1,50 @@
+<div class="col-12 col-md-5 col-lg-4 order-md-2">
+    <div class="blog-sidebar">
+        <div class="blog-sidebar-section -category">
+            <div class="center-line-title">
+                <h5>Categories</h5>
+            </div>
+            {% for category in categories %}
+                <a class="category -bar " href="{{ url }}?category={{ category.slug }}">
+                    <div class="category__background" style="background-image: url({{ category.image.url }})">
+                    </div>
+                    <h5 class="title">{{ category.name }}</h5>
+                    <h5 class="quantity">{{ category.post_count }}</h5>
+                </a>
+            {% endfor %}
+
+        </div>
+
+        <div class="blog-sidebar-section -trending-post">
+            <div class="center-line-title">
+                <h5>Trending post</h5>
+            </div>
+            <!--Trending Post -->
+            {% for post in trending_post %}
+
+                <div class="trending-post">
+                    <div class="trending-post_image">
+                        <div class="rank">{{ forloop.counter }}</div>
+                        <img src="{{ post.pic.url }}"
+                             alt="{{ post.content|truncatechars:50|safe|striptags }}"/>
+                    </div>
+                    <div class="trending-post_content">
+                        <h5>{{ post.category.first.name }}</h5>
+                        <a href="{% url 'post_form_detail' post.slug %}">{{ post.title }}</a>
+                        <div class="info__time">
+                            <i class="far fa-clock"></i>
+                            <p>{{ post.created_at|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Subscribe Form -->
+        <form class="subcribe-box subcribe-box" action="{% url 'index' %}" method="POST">
+            <h5>Subcribe</h5>
+            <p>Lorem ipsum dolor amet, consectetur adipiscing elit, sed tempor.</p>
+            <input placeholder="Your email" name="email" type="email">
+            <button type="submit" class="btn -normal">Subscribe</button>
+        </form>
+    </div>
+</div>
