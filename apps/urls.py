@@ -2,8 +2,8 @@ from django.contrib.auth.views import LogoutView
 from django.urls import path
 
 from apps.views import IndexView, AboutView, ContactView, PostListView, CustomLoginView, RegisterView, \
-    DetailFormPostView, ActivateAccountView, CreatePostView, PreviewDetailFormPostView, AuthorPostListView, ProfileView
-from apps.views.base import DownloadPDF, ViewPDF
+    DetailFormPostView, CreatePostView, PreviewDetailFormPostView, AuthorPostListView, ProfileView
+from apps.views.auth import ActivateEmailView
 
 urlpatterns = [
     path('login', CustomLoginView.as_view(), name='login'),
@@ -21,8 +21,6 @@ urlpatterns = [
     path('preview-post/<str:slug>', PreviewDetailFormPostView.as_view(), name='preview_post_form_detail'),
     path('create-post', CreatePostView.as_view(), name='create_post'),
 
-    path('activate_account/<str:uidb64>/<str:token>', ActivateAccountView, name='activate_user'),
-    path('pdf_view/', ViewPDF.as_view(), name="pdf_view"),
-    path('pdf_download/', DownloadPDF.as_view(), name="pdf_download"),
+    path('activate_account/<str:uid64>/<str:token>', ActivateEmailView.as_view(), name='activate_user'),
     path('', IndexView.as_view(), name='index'),
 ]

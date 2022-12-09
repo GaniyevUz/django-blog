@@ -1,65 +1,66 @@
-{% extends 'apps/auth/base.html' %}
-
-{% block title %}Register Page{% endblock %}
-
-{% block main_content %}
-
-    <section class="signup">
-        <div class="container">
-            <div class="signup-content">
-                <div class="signup-form">
-                    <h2 class="form-title">Sign up</h2>
-                    {% if forms.errors %}
-                        {% for field in forms %}
-                            {% if field.errors %}
-                                <div style="color: red;">
-                                    <h3> {{ field.label }} - {{ field.errors|striptags }}</h3>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                    <form method="POST" action="{% url 'register' %}" class="register-form" id="register-form">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="text" name="username" id="name" placeholder="Username"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="email"><i class="zmdi zmdi-email"></i></label>
-                            <input type="email" name="email" id="email" placeholder="Your Email"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone"><i class="zmdi zmdi-phone"></i></label>
-                            <input type="text" name="phone" id="phone" placeholder="Your Phone"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="pass"><i class="zmdi zmdi-lock"></i></label>
-                            <input type="password" name="password" id="pass" placeholder="Password"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
-                            <input type="password" name="confirm_password" id="re_pass"
-                                   placeholder="Repeat your password"/>
-                        </div>
-                        <div class="form-group">
-                            <input type="checkbox" name="agree-term" id="agree-term" class="agree-term"/>
-                            <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all
-                                statements in <a href="#" class="term-service">Terms of service</a></label>
-                        </div>
-                        <div class="form-group form-button">
-                            <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
-                        </div>
-                    </form>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sin Up</title>
+    <link rel="stylesheet" href="{% static 'apps/auth/register.css' %}">
+</head>
+<body>
+<div class="box">
+    <form autocomplete="off" method="post" action="{% url 'register' %}">
+        <h2>Sign Up</h2>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger" style="color: rgba(255,0,0,0.88);">
+                    <h3>{{ error|escape }}</h3>
                 </div>
-                <div class="signup-image">
-                    <figure>
-                        <img src="https://colorlib.com/etc/regform/colorlib-regform-7/images/signup-image.jpg"
-                             alt="sing up image">
-                    </figure>
-                    <a href="{% url 'login' %}" class="signup-image-link">I am already member</a>
-                </div>
-            </div>
+            {% endfor %}
+        {% endif %}
+        <div class="inputBox">
+            <input type="text" required="required" name="username">
+            <span>Username</span>
+            <i></i>
         </div>
-    </section>
+        <div class="inputBox">
+            <input type="email" name="email" required="required">
+            <span>Email</span>
+            <i></i>
+        </div>
+        <div class="inputBox">
+            <input type="tel" name="phone" required="required">
+            <span>Phone</span>
+            <i></i>
+        </div>
+        <div class="inputBox">
+            <input type="password" name="password" required="required">
+            <span>Password</span>
+            <i class="fa fa-instagram-square"></i>
+        </div>
+        <div class="inputBox">
+            <input type="password" name="confirm_password" required="required">
+            <span>Confirm Password</span>
+            <i></i>
+        </div>
+        <div class="links">
+            <a></a>
+            <a href="{% url 'login' %}">Sign In</a>
+        </div>
+        <input type="submit" value="Sign Up">
+    </form>
+</div>
+{% if context %}
 
-{% endblock %}
+    <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Your Mail Sent Successfully!',
+            text: 'We’ll will send you a confirmation letter shortly. Thank you for your patience.',
+            footer: '<a href="">Why do I have this issue?</a>'
+        })
+    </script>
+{% endif %}
+</body>
+</html>

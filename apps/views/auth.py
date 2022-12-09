@@ -1,37 +1,42 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
+from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.template import Template, Context
 from django.urls import reverse_lazy, reverse
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
-from django.views.generic import ListView, DetailView, FormView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, FormView, CreateView, UpdateView, TemplateView
 
 from apps.forms import CustomLoginForm, RegisterForm, CreatePostForm, UserForm
 from apps.models import Category, Post, Comment, User
+from apps.tasks import send_to_gmail
 from apps.utils.token import account_activation_token
-from apps.utils.verify_email import send_verification
 
 
 class AuthorPostListView(LoginRequiredMixin, ListView):
     template_name = 'apps/blog-category.html'
+    queryset = Post.objects.order_by('-created_at')
+    context_object_name = 'posts'
     paginate_by = 5
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         slug = self.request.GET.get('category')
-        author = self.request.user
-        qs = self.get_queryset()
-        context['posts'] = qs
-        context['url'] = reverse('preview_author_posts')
+        context['url'] = reverse('category')
+        context['owner_post'] = True
         context['category'] = Category.objects.filter(slug=slug).first()
         return context
 
-    def get_queryset(self, *args, **kwargs):
+    def get_queryset(self):
+        qs = super().get_queryset()
         author = self.request.user
-        qs = Post.objects.order_by('-created_at').filter(author=author)
+        qs = qs.filter(author=author)
         if category := self.request.GET.get('category'):
-            return qs.filter(category__slug=category, author=author)
+            return qs.filter(category__slug=category)
         return qs
 
 
@@ -54,8 +59,13 @@ class RegisterView(FormView):
     def form_valid(self, form):
         user = form.save()
         if user is not None:
-            send_verification(self.request, user)
-            return render(self.request, 'apps/auth/temp.html',
+            # send_verification(self.request, user)
+            current_site = get_current_site(self.request)
+            send_to_gmail.apply_async(
+                args=[form.data.get('email'), current_site.domain, 'forgot'],
+                countdown=5
+            )
+            return render(self.request, 'apps/auth/register.html',
                           {'title': 'Account activation', 'context': 'Check your email'})
         return super().form_valid(form)
 
@@ -74,45 +84,61 @@ class RegisterView(FormView):
 class ProfileView(UpdateView):
     template_name = 'apps/auth/profile.html'
     form_class = UserForm
+    model = User
     success_url = reverse_lazy('profile')
 
-    # queryset = User.objects.first()
-    # if form.cleaned_data.get('avatar') is None:
-    #     del form.cleaned_data['avatar']
-    # User.objects.filter(pk=self.request.user.pk).update(**form.cleaned_data)
-
-    # def dispatch(self, request, *args, **kwargs):
-    #     options = {
-    #         # 'page-size': 'Letter',
-    #         'encoding': "UTF-8",
-    #         # 'no-outline': None
-    #     }
-    #     # pdfkit.from_url('http://localhost:8000' + reverse('category'), 'out.pdf', options=options)
-    #     return super().dispatch(request, *args, **kwargs)
-
     def get(self, request, **kwargs):
-        user = User.objects.get(pk=self.request.user.pk)
+        if self.request.user.is_anonymous:
+            return redirect('login')
+        self.object = User.objects.get(pk=self.request.user.pk)
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        context = self.get_context_data(object=user, form=form)
+        context = self.get_context_data(object=self.object, form=form)
         return self.render_to_response(context)
 
     def get_object(self, queryset=None):
         return self.request.user
 
 
-def ActivateAccountView(request, uidb64, token):
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
+# def ActivateAccountView(request, uidb64, token):
+#     try:
+#         uid = force_str(urlsafe_base64_decode(uidb64))
+#         user = User.objects.get(pk=uid)
+#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#         user = None
+#
+#     if user is not None and account_activation_token.check_token(user, token):
+#         user.is_active = True
+#         user.save()
+#         return redirect('login')
+#     return render(request, 'apps/404.html')
 
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        return redirect('login')
-    return render(request, 'apps/404.html')
+
+class ActivateEmailView(TemplateView):
+    template_name = 'apps/auth/temp.html'
+
+    def get(self, request, *args, **kwargs):
+        uid = kwargs.get('uid64')
+        token = kwargs.get('token')
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=uid)
+        except Exception as e:
+            print(e)
+            user = None
+        if user is not None and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+            login(request, user)
+            messages.add_message(
+                request=request,
+                level=messages.SUCCESS,
+                message="Your account successfully activated!"
+            )
+            return redirect('index')
+        else:
+            return HttpResponse('Activation link is invalid!')
 
 
 def entry_not_found(request, exception, template_name='404.html'):
@@ -128,12 +154,7 @@ class CreatePostView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         obj = form.save(commit=False)
         obj.author = self.request.user
-        obj.title = form.data.get('title')
-        category = form.data.get('category')
-        post = obj.save()
-        instance = Category.objects.create(post=post)
-
-        instance.category.set(category)
+        obj.save()
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -145,12 +166,12 @@ class PreviewDetailFormPostView(LoginRequiredMixin, DetailView):
     queryset = Post.objects.all()
     context_object_name = 'post'
 
-    # def dispatch(self, request, *args, **kwargs):
-    #     user = request.user
-    #     if user.is_superuser or user.is_staff:
-    #         return super().dispatch(request, *args, **kwargs)
-    #
-    #     return render(request, 'apps/404.html')
+    def dispatch(self, request, *args, **kwargs):
+        user = request.user
+        if user.is_superuser:
+            return super().dispatch(request, *args, **kwargs)
+
+        return render(request, 'apps/404.html')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -44,20 +44,8 @@ class CreateCommentForm(ModelForm):
 
 
 class CreatePostForm(ModelForm):
-    # title = CharField(max_length=255)
-    # pic = ResizedImageField(upload_to='posts/')
-    # category = ModelMultipleChoiceField(
-    #     queryset=Category.objects.all(),
-    # )
-
-    # def clean_content(self):
-    #     cleaned_data = self.cleaned_data
-    #     cleaned_data['title'] = self.data.get('title')
-    #     cleaned_data['category'] = self.data.get('category')
-    #     return cleaned_data
-
     class Meta:
         model = Post
-        # exclude = ('status', 'author', 'slug',)
-        fields = ('title', 'pic', 'category', 'content')
+        exclude = ('status', 'author', 'slug',)
+        # fields = ('title', 'pic', 'category', 'content')
         # fields = ('content',)

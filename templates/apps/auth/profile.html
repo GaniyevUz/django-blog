@@ -3,10 +3,10 @@
 {% block title %}Register Page{% endblock %}
 
 {% block main_content %}
-
-    <div class="container-xl px-4 mt-4">
+    <div class="container px-4 mt-4">
         <hr class="mt-0 mb-4">
-        <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data">
+        <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data" class="needs-validation"
+              novalidate>
 
             <div class="row">
                 {% csrf_token %}
@@ -21,13 +21,7 @@
                             <!-- Profile picture help block-->
                             <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
                             <!-- Profile picture upload button-->
-                            {#                        <button class="btn btn-primary" type="button">Upload new image</button>#}
                             <input type="file" name="avatar" class="small mb-2" accept="image/png, image/jpeg">
-                            {#                        <div class="mb-3">#}
-                            {#                            <label for="inputBio">Biography</label>#}
-                            {#                            <textarea class="form-control" id="inputBio" style="height: 100px"#}
-                            {#                                      placeholder="Enter your Bio" required> {{ user.bio }}</textarea>#}
-                            {#                        </div>#}
                         </div>
                     </div>
                 </div>
@@ -43,6 +37,9 @@
 {#                                <input class="form-control" id="inputUsername" type="text"#}
 {#                                       placeholder="Enter your username" name="username" value="{{ user.username }}"#}
 {#                                       required>#}
+{#                                <div class="invalid-feedback">#}
+{#                                    Please choose a username.#}
+{#                                </div>#}
 {#                            </div>#}
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
@@ -52,6 +49,9 @@
                                     <input class="form-control" id="inputFirstName" type="text"
                                            placeholder="Enter your first name" name="first_name"
                                            value="{{ user.first_name }}" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a first name.
+                                    </div>
                                 </div>
                                 <!-- Form Group (last name)-->
                                 <div class="col-md-6">
@@ -59,6 +59,9 @@
                                     <input class="form-control" id="inputLastName" type="text"
                                            placeholder="Enter your last name" name="last_name"
                                            value="{{ user.last_name }}" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a last name.
+                                    </div>
                                 </div>
                             </div>
                             <!-- Form Row        -->
@@ -67,8 +70,11 @@
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="inputEmail">Email address</label>
                                     <input class="form-control" id="inputEmail" type="email"
-                                           placeholder="Enter your email address" name="email" value="{{ user.email }}"
-                                           required>
+                                           placeholder="Enter your email address" name="email" value="{{ user.email }}" required>
+
+                                <div class="invalid-feedback">
+                                    Please provide a valid email address.
+                                </div>
                                 </div>
                                 <!-- Form Group (location)-->
                                 <div class="col-md-6">
@@ -76,22 +82,12 @@
                                     <input class="form-control" id="inputPhone" type="tel"
                                            placeholder="Enter your phone number" name="phone" value="{{ user.phone }}"
                                            required>
+
+                                <div class="invalid-feedback">
+                                    Please provide a phone number.
+                                </div>
                                 </div>
                             </div>
-                            {#                            <div class="row gx-3 mb-3">#}
-                            {#                                <!-- Form Group (organization name)-->#}
-                            {#                                <div class="col-md-6">#}
-                            {#                                    <label class="small mb-1" for="inputPassword">New Password</label>#}
-                            {#                                    <input class="form-control" id="inputPassword" type="password"#}
-                            {#                                           placeholder="Enter your new password" required>#}
-                            {#                                </div>#}
-                            {#                                <!-- Form Group (location)-->#}
-                            {#                                <div class="col-md-6">#}
-                            {#                                    <label class="small mb-1" for="inputConfirmPassword">Confirm Password</label>#}
-                            {#                                    <input class="form-control" id="inputConfirmPassword" type="password"#}
-                            {#                                           placeholder="Enter your Confirm password" required>#}
-                            {#                                </div>#}
-                            {#                            </div>#}
                             <div class="mb-3">
                                 <label for="inputBio">Biography</label>
                                 <textarea class="form-control" id="inputBio" style="height: 100px"

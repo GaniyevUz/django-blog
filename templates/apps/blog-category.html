@@ -1,7 +1,5 @@
 {% extends 'apps/parts/base.html' %}
-{% load static %}
-{#{% load header %}#}
-
+{% block title %}Blogs{% endblock %}
 {% block main_content %}
     <div class="container">
         <div class="breadcrumb">
@@ -20,7 +18,8 @@
                     {% if category %}
                         <div class="category__header">
                             <div class="category__header__text">
-                                <h5>Categories:</h5><a href="#">{{ category.name }}</a>
+                                <h5>Categories:</h5><a
+                                    href="{{ url }}?category={{ category.slug }}">{{ category.name }}</a>
                             </div>
                             <div class="category__header__filter">
                             </div>
@@ -37,21 +36,31 @@
                                         {% if post.category.exists %}
                                             <h5 class="card__content-category">{{ post.category.first.name }}</h5>
                                         {% endif %}
-                                        <a class="card__content-title" href="{% url 'post_form_detail' post.slug %}"
-                                           tabindex="0">
+                                        <a class="card__content-title" href="{% url 'post_form_detail' post.slug %}">
                                             {{ post.title }}
                                         </a>
+                                        {% if owner_post %}
+                                            {% if post.status == 'pending' %}
+                                                <h5><span class="badge bg-warning text-dark">Pending</span></h5>
+                                            {% elif post.status == 'cancel' %}
+                                                <h5><span class="badge bg-danger text-white">Canceled</span></h5>
+                                            {% else %}
+                                                <h5><span class="badge bg-success text-white">Submitted</span></h5>
+
+                                            {% endif %}
+                                        {% endif %}
                                         <div class="card__content-info">
                                             <div class="info__time">
                                                 <i class="far fa-clock"></i>
-                                                <p>Clock Wed 02, 2020</p>
+                                                <p>{{ post.created_at|date:"D m, Y" }}</p>
                                             </div>
                                             <div class="info__comment">
                                                 <i class="far fa-comment"></i>
                                                 <p>{{ post.comment_count }}</p>
                                             </div>
                                         </div>
-                                        <p class="card__content-description">{{ post.content|safe|striptags|truncatechars:100 }}</p>
+                                        <p class="card__content-description">
+                                            {{ post.content|safe|striptags|truncatechars:100 }}</p>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -68,7 +77,8 @@
                                 {% endif %}
                                 {% for i in page_obj.paginator.page_range %}
                                     {% if page_obj.number == i %}
-                                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span>
+                                        </li>
                                     {% else %}
                                         <li><a href="?page={{ i }}">{{ i }}</a></li>
                                     {% endif %}

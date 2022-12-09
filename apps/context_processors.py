@@ -5,7 +5,7 @@ from apps.models import Category, Post, About
 
 def context_category(request):
     return {
-        'categories': Category.objects.annotate(p_count=Count('post')).order_by('-p_count')[:2],
+        'categories': Category.objects.annotate(p_count=Count('post')).order_by('-p_count'),
         'tags': Category.objects.annotate(p_count=Count('post')).order_by('-p_count')
     }
 

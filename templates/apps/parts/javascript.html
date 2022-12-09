@@ -6,3 +6,31 @@
 <script rel="script/javascript" src="{% static 'apps/assets/js/imagesloaded.pkgd.min.js' %}"></script>
 <script rel="script/javascript" src="{% static 'apps/assets/js/vimeo.player.min.js' %}"></script>
 <script rel="script/javascript" src="{% static 'apps/assets/js/main.js' %}"></script>
+
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+    CKEDITOR.replace('editor1', {
+        width: "100%",
+    });
+</script>

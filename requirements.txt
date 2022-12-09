@@ -7,5 +7,6 @@ Pillow==9.3.0
 psycopg2-binary==2.9.5
 sqlparse==0.4.3
 fontawesomefree==6.2.1
-six=1.16.0
+six==1.16.0
 celery==5.2.7
+redis==4.4.0

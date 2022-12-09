@@ -54,7 +54,7 @@ class PostAdmin(ModelAdmin):
     def response_change(self, request, obj):
         if request.POST.get('view'):
             return redirect('post_form_detail', obj.slug)
-        elif request.POST.get('status'):
+        elif request.POST.get('status') and request.POST.get('status') in ['active', 'cancel']:
             obj.status = request.POST.get('status').lower()
             obj.save()
         return HttpResponseRedirect("./")
