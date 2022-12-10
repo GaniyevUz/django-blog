@@ -82,7 +82,7 @@ class RegisterView(FormView):
 
 class ChangePasswordView(UpdateView):
     form_class = ChangePasswordForm
-    success_url = reverse('index')
+    success_url = reverse_lazy('index')
 
 
 class ProfileView(UpdateView):
