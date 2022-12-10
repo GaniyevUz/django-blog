@@ -14,7 +14,7 @@
                 <div class="col-12 col-md-6">
                     <div class="contact-us__info">
                         <h3 class="contact-title">GET IN TOUCH</h3>
-                        <p class="contact-description">{{ about.about|truncatechars:300 }}</p>
+                        <p class="contact-description">{{ about.about|truncatechars:300|safe }}</p>
                         <div class="contact-method">
                             <div class="contact-method__item"><i class="fas fa-map-marker-alt"></i>
                                 <p>{{ about.location }}</p>

@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views.generic import ListView, DetailView, FormView
 
 from apps.forms import CreateCommentForm
-from apps.models import Category, Post, About, Comment, Contact
+from apps.models import Category, Post, About, Comment, Contact, PostViewHistory
 
 
 class IndexView(ListView):
@@ -28,9 +28,7 @@ class PostListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
-        slug = self.request.GET.get('category')
         context['url'] = reverse('category')
-        context['category'] = Category.objects.filter(slug=slug).first()
         return context
 
     def get_queryset(self, *args, **kwargs):
@@ -41,7 +39,6 @@ class PostListView(ListView):
 
 
 class AboutView(ListView):
-    # queryset = About.objects.first()
     template_name = 'apps/about.html'
     context_object_name = 'about'
 
@@ -50,8 +47,8 @@ class AboutView(ListView):
 
 
 class ContactView(ListView):
-    # template_name = 'apps/contact.html'
-    template_name = 'apps/auth/temp.html'
+    template_name = 'apps/contact.html'
+    # template_name = 'apps/auth/temp.html'
     model = Contact
     fields = '__all__'
     context_object_name = 'contact'
@@ -63,11 +60,13 @@ class DetailFormPostView(FormView, DetailView):
     context_object_name = 'post'
     form_class = CreateCommentForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['post_categories'] = Category.objects.filter(post=context.get('post'))
-        context['comments'] = Comment.objects.filter(post__slug=self.request.path.split('/')[-1])
-        return context
+    def get(self, request, *args, **kwargs):
+        slug = kwargs.get('slug')
+        post = Post.objects.get(slug=slug)
+        if post:
+            post.update_views()
+            PostViewHistory.objects.create(post=post).save()
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         slug = kwargs.get('slug')
@@ -79,6 +78,6 @@ class DetailFormPostView(FormView, DetailView):
                 'text': request.POST.get('message'),
             }
             # form = self.form_class(data)
-            form = Comment.objects.create(**data)
-            form.save()
+            comment = Comment.objects.create(**data)
+            comment.save()
         return redirect('post_form_detail', slug)

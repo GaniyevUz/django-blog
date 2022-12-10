@@ -31,16 +31,16 @@
                         <div class="card-header">Account Details</div>
                         <div class="card-body">
                             <!-- Form Group (username)-->
-{#                            <div class="mb-3">#}
-{#                                <label class="small mb-1" for="inputUsername">Username (how your name will appear to#}
-{#                                    other users on the site)</label>#}
-{#                                <input class="form-control" id="inputUsername" type="text"#}
-{#                                       placeholder="Enter your username" name="username" value="{{ user.username }}"#}
-{#                                       required>#}
-{#                                <div class="invalid-feedback">#}
-{#                                    Please choose a username.#}
-{#                                </div>#}
-{#                            </div>#}
+                            {#                            <div class="mb-3">#}
+                            {#                                <label class="small mb-1" for="inputUsername">Username (how your name will appear to#}
+                            {#                                    other users on the site)</label>#}
+                            {#                                <input class="form-control" id="inputUsername" type="text"#}
+                            {#                                       placeholder="Enter your username" name="username" value="{{ user.username }}"#}
+                            {#                                       required>#}
+                            {#                                <div class="invalid-feedback">#}
+                            {#                                    Please choose a username.#}
+                            {#                                </div>#}
+                            {#                            </div>#}
                             <!-- Form Row-->
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (first name)-->
@@ -70,11 +70,12 @@
                                 <div class="col-md-6">
                                     <label class="small mb-1" for="inputEmail">Email address</label>
                                     <input class="form-control" id="inputEmail" type="email"
-                                           placeholder="Enter your email address" name="email" value="{{ user.email }}" required>
+                                           placeholder="Enter your email address" name="email" value="{{ user.email }}"
+                                           required>
 
-                                <div class="invalid-feedback">
-                                    Please provide a valid email address.
-                                </div>
+                                    <div class="invalid-feedback">
+                                        Please provide a valid email address.
+                                    </div>
                                 </div>
                                 <!-- Form Group (location)-->
                                 <div class="col-md-6">
@@ -83,9 +84,9 @@
                                            placeholder="Enter your phone number" name="phone" value="{{ user.phone }}"
                                            required>
 
-                                <div class="invalid-feedback">
-                                    Please provide a phone number.
-                                </div>
+                                    <div class="invalid-feedback">
+                                        Please provide a phone number.
+                                    </div>
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -100,6 +101,57 @@
                 </div>
             </div>
         </form>
+        <hr class="mt-0 mb-4">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-8">
+                <form method="post" action="{% url 'change_password' %}" enctype="multipart/form-data" class="needs-validation" novalidate>
 
+                    <div class="row pb-4">
+                        {% csrf_token %}
+                        <div class="col-xl-8">
+                            <!-- Account details card-->
+                            <div class="card mb-4">
+                                <div class="card-header">Change password</div>
+                                <div class="card-body">
+                                    <!-- Form Group (username)-->
+                                    <div class="mb-3">
+                                        <label class="small mb-1" for="password">Old Password</label>
+                                        <input class="form-control" id="password" type="text"
+                                               placeholder="Enter your username" name="password" required>
+                                        <div class="invalid-feedback">
+                                            Please choose a username.
+                                        </div>
+                                    </div>
+                                    <!-- Form Row-->
+                                    <div class="row gx-3 mb-3">
+                                        <!-- Form Group (first name)-->
+                                        <div class="col-md-6">
+                                            <label class="small mb-1" for="new_password">First name</label>
+                                            <input class="form-control" id="new_password" type="text"
+                                                   placeholder="Enter your first name" name="new_password" required>
+                                            <div class="invalid-feedback">
+                                                Please provide a new password.
+                                            </div>
+                                        </div>
+                                        <!-- Form Group (last name)-->
+                                        <div class="col-md-6">
+                                            <label class="small mb-1" for="confirm_password">Confirm New
+                                                Password</label>
+                                            <input class="form-control" id="confirm_password" type="text"
+                                                   placeholder="Confirm your password" name="confirm_password" required>
+                                            <div class="invalid-feedback">
+                                                Please Confirm your new password.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Save changes button-->
+                                    <input class="btn btn-info" type="submit" value="Save changes">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}

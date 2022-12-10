@@ -1,6 +1,8 @@
+from datetime import date
+
 from django.db.models import Count
 
-from apps.models import Category, Post, About
+from apps.models import Category, Post, About, PostViewHistory
 
 
 def context_category(request):
@@ -20,6 +22,6 @@ def context_post(request):
     return {
         'posts': Post.objects.all(),
         'feature_posts': Post.objects.order_by('-created_at')[:3],
-        # 'trending_post': Post.objects.extra(select={'created_at': 'MONTH(created_at)'}, order_by=['-created_at'])[:5]
-        'trending_post': Post.objects.extra(order_by=['-created_at'])[:5]
+        'trending_post': Post.objects.all()[:5]
+        # 'trending_post': PostViewHistory.objects.filter(viewed_at__month__gt=date.today().month - 1)
     }

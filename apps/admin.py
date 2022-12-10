@@ -70,6 +70,7 @@ class PostAdmin(ModelAdmin):
 
     status_icon.short_description = 'status'
 
+
 @admin.register(About)
 class AboutAdmin(ModelAdmin):
     pass

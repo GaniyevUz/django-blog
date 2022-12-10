@@ -21,8 +21,9 @@
 <div id="content">
     {% block main_content %}{% endblock %}
 </div>
-
-{% include 'apps/parts/footer.html' %}
+{% if not request.path == '/profile' %}
+    {% include 'apps/parts/footer.html' %}
+{% endif %}
 {% include 'apps/parts/javascript.html' %}
 
 </body>

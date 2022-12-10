@@ -19,7 +19,7 @@
                         <div class="category__header">
                             <div class="category__header__text">
                                 <h5>Categories:</h5><a
-                                    href="{{ url }}?category={{ category.slug }}">{{ category.name }}</a>
+                                    href="{{ url }}?category={{ posts.category_set.first.slug }}">{{ posts.category_set.first.name }}</a>
                             </div>
                             <div class="category__header__filter">
                             </div>

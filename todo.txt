@@ -9,10 +9,10 @@ ckeditor ulanishi ruyhatdan otgan odam blog qosha olishi ✅
 4) post detailda (preview, cancel, active degan buttonlar bolsin) ✅
 5) post detailda yana 1ta button (pdf ga otkazish) -----------
 6) profile page (user ozining malumotlarini ozgartiradi, ) ✅
-
+7) githubga qoyish ✅
 1. register  ✅
 2. reset password
-3. change password
+3. change password ~~~
 
 
 4. confirm email (one time link) ✅

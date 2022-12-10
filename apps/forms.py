@@ -37,6 +37,7 @@ class CustomLoginForm(AuthenticationForm):
         return password
 
 
+#
 class CreateCommentForm(ModelForm):
     class Meta:
         model = Comment
@@ -47,5 +48,15 @@ class CreatePostForm(ModelForm):
     class Meta:
         model = Post
         exclude = ('status', 'author', 'slug',)
-        # fields = ('title', 'pic', 'category', 'content')
-        # fields = ('content',)
+
+
+class ChangePasswordForm(ModelForm):
+    def clean_password(self):
+        password = self.data.get('password')
+        user = User.objects.get(username=self)
+        new_password = self.data.get('new_password')
+        confirm_password = self.data.get('confirm_password')
+
+    class Meta:
+        model = User
+        fields = ('password',)

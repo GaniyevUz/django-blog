@@ -2,7 +2,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db.models import ImageField, TextField, JSONField, Model, ForeignKey, DateTimeField, CharField, EmailField, \
-    SlugField, CASCADE, SET_NULL, ManyToManyField, TextChoices, BooleanField
+    SlugField, CASCADE, SET_NULL, ManyToManyField, TextChoices, BooleanField, DateField, BigIntegerField
 from django.utils.html import format_html
 from django.utils.text import slugify
 from django_resized import ResizedImageField
@@ -87,6 +87,7 @@ class Post(Model):
     pic = ResizedImageField(upload_to='posts/')
     category = ManyToManyField(Category)
     created_at = DateTimeField(auto_now=True)
+    views = BigIntegerField(default=0)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -104,6 +105,11 @@ class Post(Model):
                 else:
                     self.slug += '-1'
         super().save(*args, **kwargs)
+
+    def update_views(self, *args, **kwargs):
+        self.views = self.views + 1
+        super().save(*args, **kwargs)
+        return self.views
 
     @property
     def comment_count(self):
@@ -160,3 +166,11 @@ class Contact(Model):
 
     def __str__(self):
         return f'{self.name} {self.email}'
+
+
+class PostViewHistory(Model):
+    post = ForeignKey(Post, CASCADE)
+    viewed_at = DateField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.post.title} at {self.viewed_at}'

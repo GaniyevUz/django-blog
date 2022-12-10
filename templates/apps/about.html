@@ -22,7 +22,7 @@
                 <div class="col-12 col-md-6">
                     <div class="about-us__content">
                         <h3>Thank you for visit out my website.</h3>
-                        <p>{{ about.about }}</p>
+                        <p>{{ about.about|safe }}</p>
                         <div class="follow">
                             {% if about.social_accounts %}
                                 <p>Follow us:</p>

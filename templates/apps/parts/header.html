@@ -44,7 +44,6 @@
                 <a class="btn btn-outline-primary" href="{% url 'login' %}">Log in</a>
                             {% else %}
                                 <a class="btn btn-outline-info" href="{% url 'preview_author_posts' %}">My Blogs</a>
-                                <a class="btn btn-outline-secondary" href="{% url 'create_post' %}">Add Post</a>
                                 <a class="btn btn-outline-secondary" href="{% url 'profile' %}">{{ user.username }}</a>
                                 <a class="btn btn-outline-primary" href="{% url 'logout' %}">Log out</a>
             {% endif %}

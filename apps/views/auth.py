@@ -5,15 +5,14 @@ from django.contrib.auth.views import LoginView
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from django.template import Template, Context
 from django.urls import reverse_lazy, reverse
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic import ListView, DetailView, FormView, CreateView, UpdateView, TemplateView
 
-from apps.forms import CustomLoginForm, RegisterForm, CreatePostForm, UserForm
+from apps.forms import CustomLoginForm, RegisterForm, CreatePostForm, UserForm, ChangePasswordForm
 from apps.models import Category, Post, Comment, User
-from apps.tasks import send_to_gmail
+from apps.utils.tasks import send_to_gmail
 from apps.utils.token import account_activation_token
 
 
@@ -81,6 +80,11 @@ class RegisterView(FormView):
         return super().get(request, *args, **kwargs)
 
 
+class ChangePasswordView(UpdateView):
+    form_class = ChangePasswordForm
+    success_url = reverse('index')
+
+
 class ProfileView(UpdateView):
     template_name = 'apps/auth/profile.html'
     form_class = UserForm
@@ -90,28 +94,12 @@ class ProfileView(UpdateView):
     def get(self, request, **kwargs):
         if self.request.user.is_anonymous:
             return redirect('login')
-        self.object = User.objects.get(pk=self.request.user.pk)
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        context = self.get_context_data(object=self.object, form=form)
+        self.object = self.request.user
+        context = self.get_context_data(object=self.object, form=self.form_class)
         return self.render_to_response(context)
 
     def get_object(self, queryset=None):
         return self.request.user
-
-
-# def ActivateAccountView(request, uidb64, token):
-#     try:
-#         uid = force_str(urlsafe_base64_decode(uidb64))
-#         user = User.objects.get(pk=uid)
-#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-#         user = None
-#
-#     if user is not None and account_activation_token.check_token(user, token):
-#         user.is_active = True
-#         user.save()
-#         return redirect('login')
-#     return render(request, 'apps/404.html')
 
 
 class ActivateEmailView(TemplateView):
@@ -148,7 +136,7 @@ def entry_not_found(request, exception, template_name='404.html'):
 class CreatePostView(LoginRequiredMixin, CreateView):
     form_class = CreatePostForm
     template_name = 'apps/add-post.html'
-    success_url = reverse_lazy('category')
+    success_url = reverse_lazy('preview_author_posts')
     login_url = reverse_lazy('login')
 
     def form_valid(self, form):

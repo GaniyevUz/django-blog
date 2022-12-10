@@ -66,9 +66,9 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                'apps.context_processors.context_category',
-                'apps.context_processors.context_post',
-                'apps.context_processors.context_about',
+                'apps.utils.context_processors.context_category',
+                'apps.utils.context_processors.context_post',
+                'apps.utils.context_processors.context_about',
             ],
         },
     },
@@ -202,8 +202,8 @@ EMAIL_USE_TLS = True
 
 AUTH_USER_MODEL = 'apps.User'
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Asia/Kolkata'
+CELERY_TIMEZONE = 'Asia/Tashkent'
