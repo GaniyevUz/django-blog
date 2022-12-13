@@ -1,13 +1,12 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
-from django.http import HttpResponse, HttpResponseRedirect
-from django.middleware.csrf import get_token
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-from django.template.loader import get_template
 from django.urls import reverse, path
 from django.utils.html import format_html
 
-from apps.models import Category, Post, About, Comment, User
+from apps.models import Category, Post, About, Comment, User, Contact
+from apps.utils import send_to_contact
 
 
 @admin.register(Category)
@@ -20,8 +19,14 @@ class CategoryAdmin(ModelAdmin):
 class PostAdmin(ModelAdmin):
     search_fields = ('category__name', 'title')
     list_display = ('title', 'categories', 'status_icon', 'post_pic', 'created_at', 'status_button')
-    exclude = ('slug',)
+    exclude = ('slug', 'views')
     list_filter = ('category', 'status', 'created_at')
+    readonly_fields = ('status',)
+    list_per_page = 15
+
+    change_form_template = 'admin/custom/change_form_post.html'
+
+    # list_editable = ('pic', )
 
     def status_icon(self, obj):
         data = {
@@ -40,21 +45,21 @@ class PostAdmin(ModelAdmin):
         return urls + my_url
 
     def active(self, request, id):
-        post = Post.objects.filter(id=id).first()
-        post.status = 'active'
+        post = Post.objects.get(id=id)
+        post.status = Post.Status.ACTIVE
         post.save()
         return HttpResponseRedirect('../')
 
     def canceled(self, request, id):
-        post = Post.objects.filter(id=id).first()
-        post.status = 'cancel'
+        post = Post.objects.get(id=id)
+        post.status = Post.Status.CANCEL
         post.save()
         return HttpResponseRedirect('../')
 
     def response_change(self, request, obj):
         if request.POST.get('view'):
-            return redirect('post_form_detail', obj.slug)
-        elif request.POST.get('status') and request.POST.get('status') in ['active', 'cancel']:
+            return redirect('preview_post_form_detail', obj.slug)
+        elif request.POST.get('status') and request.POST.get('status') in [Post.Status.ACTIVE, Post.Status.CANCEL]:
             obj.status = request.POST.get('status').lower()
             obj.save()
         return HttpResponseRedirect("./")
@@ -79,6 +84,7 @@ class AboutAdmin(ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(ModelAdmin):
     list_display = ('comment', 'author', 'post')
+    readonly_fields = ('post', 'author', 'text')
 
     def comment(self, obj):
         return obj.text[:50] + '...'
@@ -87,3 +93,27 @@ class CommentAdmin(ModelAdmin):
 @admin.register(User)
 class UserAdmin(ModelAdmin):
     pass
+
+
+@admin.register(Contact)
+class ContactAdmin(ModelAdmin):
+
+    change_form_template = 'admin/custom/change_form_message.html'
+    list_display = ('subject', 'user', 'status')
+    exclude = ('status',)
+    readonly_fields = ('user', 'subject', 'text')
+    list_filter = ('status',)
+    list_per_page = 15
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def response_change(self, request, obj):
+        if request.POST.get('send_mail'):
+            obj.status = True
+            obj.save()
+            send_to_contact.apply_async(
+                args=[obj.user.email],
+                countdown=5
+            )
+            return HttpResponseRedirect('../')

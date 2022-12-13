@@ -42,10 +42,33 @@
             {% if user.is_anonymous %}
                 <a class="btn btn-outline-primary" href="{% url 'register' %}">Sign up</a>
                 <a class="btn btn-outline-primary" href="{% url 'login' %}">Log in</a>
-                            {% else %}
-                                <a class="btn btn-outline-info" href="{% url 'preview_author_posts' %}">My Blogs</a>
-                                <a class="btn btn-outline-secondary" href="{% url 'profile' %}">{{ user.username }}</a>
-                                <a class="btn btn-outline-primary" href="{% url 'logout' %}">Log out</a>
+            {% else %}
+                {#                                <a class="btn btn-outline-secondary" href="{% url 'profile' %}">{{ user.username }}</a>#}
+                {#                                <a class="btn btn-outline-primary" href="{% url 'logout' %}">Log out</a>#}
+                <h4>{{ user.username }}</h4>
+                <div class="action">
+                    <div class="profile" onclick="menuToggle();">
+                        <img src="{{ user.avatar.url }}"/>
+                    </div>
+                    <div class="menu">
+                        <h3>{{ user.full_name }}</h3>
+                        <ul>
+                            <li class="fa fa-user">
+                                <a class="pl-3" href="{% url 'profile' %}">My profile</a>
+                            </li>
+                            <li class="fa fa-newspaper">
+                                <a class="pl-3" href="{% url 'preview_author_posts' %}">My posts</a>
+                            </li>
+                            <li class="fa fa-file">
+                                <a class="pl-3" href="{% url 'create_post' %}">Add post</a>
+                            </li>
+                            <li class="fa fa-chevron-right">
+                                <a class="pl-3" href="{% url 'logout' %}">log out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
             {% endif %}
         </div>
     </div>

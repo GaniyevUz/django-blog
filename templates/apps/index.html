@@ -10,33 +10,33 @@
                     <div class="row">
                         <div class="col-sm-6 col-md-12">
                             <div class="post-card -full -center">
-                                <a class="card__cover" href="{% url 'post_form_detail' posts.first.slug %}">
-                                    <img src="{{ post.pic.url }}"
-                                         alt="{{ post.content|safe|striptags|truncatechars:100 }}"/>
+                                <a class="card__cover" href="{% url 'post_form_detail' main_post.slug %}">
+                                    <img src="{{ main_post.pic.url }}"
+                                         alt="{{ main_post.content|safe|striptags|truncatechars:100 }}"/>
                                 </a>
                                 <div class="card__content">
-                                    <h5 class="card__content-category">{{ post.category.first.name }}</h5>
+                                    <h5 class="card__content-category">{{ main_post.category.first.name }}</h5>
                                     <a class="card__content-title"
-                                       href="{% url 'post_form_detail' post.slug %}">{{ post.title }}</a>
+                                       href="{% url 'post_form_detail' main_post.slug %}">{{ main_post.title }}</a>
                                     <div class="card__content-info">
                                         <!-- Content Author -->
                                         <div class="info__time info__author">
                                             <i class="far fa-user"></i>
-                                            <p>{{ post.author }}</p>
+                                            <p>{{ main_post.author }}</p>
                                         </div>
                                         <!-- Content Time and Date -->
                                         <div class="info__time">
                                             <i class="far fa-clock"></i>
-                                            <p>Clock {{ post.created_at|date:'D m, Y' }}</p>
+                                            <p>{{ main_post.created_at|date:'D m, Y' }}</p>
                                         </div>
 
                                         <div class="info__comment">
                                             <i class="far fa-comment"></i>
-                                            <p>{{ post.comment_count }}</p>
+                                            <p>{{ main_post.comment_count }}</p>
                                         </div>
                                     </div>
-                                    <p class="card__content-description">{{ post.content|safe|striptags|truncatechars:100 }}</p>
-                                    <a class="more-btn" href="{% url 'post_form_detail' post.slug %}">Read
+                                    <p class="card__content-description">{{ main_post.content|safe|striptags|truncatechars:100 }}</p>
+                                    <a class="more-btn" href="{% url 'post_form_detail' main_post.slug %}">Read
                                         more </a>
                                 </div>
                             </div>
@@ -67,7 +67,7 @@
                                                             <div class="card__content-info">
                                                                 <div class="info__time">
                                                                     <i class="far fa-clock"></i>
-                                                                    <p>Clock {{ post.created_at|date:'D d, Y' }}</p>
+                                                                    <p>{{ post.created_at|date:'D d, Y' }}</p>
                                                                 </div>
                                                                 <div class="info__comment">
                                                                     <i class="far fa-comment"></i>

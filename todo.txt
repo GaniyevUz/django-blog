@@ -3,7 +3,7 @@ https://bitly.com/ ✅
 
 1) blog, admin tomonidan tasdiqlanishi (adminkada status bolishi, active, cancel, pending)
 ckeditor ulanishi ruyhatdan otgan odam blog qosha olishi ✅
-2) /contact xabarlarni adminkada chiqadigan qilish kk, va tagida button(xabar yuborish [pochtasiga yuborilsin]) ~~~~
+2) /contact xabarlarni adminkada chiqadigan qilish kk, va tagida button(xabar yuborish [pochtasiga yuborilsin]) ✅
 
 3) adminka ozbekcha bolsin (faqat app nomlari) ✅
 4) post detailda (preview, cancel, active degan buttonlar bolsin) ✅
@@ -11,8 +11,8 @@ ckeditor ulanishi ruyhatdan otgan odam blog qosha olishi ✅
 6) profile page (user ozining malumotlarini ozgartiradi, ) ✅
 7) githubga qoyish ✅
 1. register  ✅
-2. reset password
-3. change password ~~~
+2. reset password ✅
+3. change password ✅
 
 
 4. confirm email (one time link) ✅
@@ -26,13 +26,3 @@ task olx.uz tayyorlash
 asosiy oynada qidiruv bolishi
 asosiy page 20ta elon
 category
-
-
-Almost done, @person! To complete your
- HipCorp sign up, we just need to verify your
- email address: person@example.com
-
-Once verified, you can start using Hip Corp to build, explore, and
-progress the future of the world. Go forth and create.
-You are receiving this email because you recently created a new Hip
-Corp account. If this wasn't you, please ignore this email.

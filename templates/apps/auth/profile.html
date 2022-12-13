@@ -1,6 +1,6 @@
 {% extends 'apps/parts/base.html' %}
 
-{% block title %}Register Page{% endblock %}
+{% block title %}Profile - {{ user.full_name }}{% endblock %}
 
 {% block main_content %}
     <div class="container px-4 mt-4">
@@ -16,32 +16,33 @@
                         <div class="card-header">Profile Picture</div>
                         <div class="card-body text-center">
                             <!-- Profile picture image-->
+                            {% if user.avatar %}
                             <img class="img-account-profile rounded-circle mb-2" src="{{ user.avatar.url }}" alt=""
                                  width="150" height="150">
+                            {% endif %}
                             <!-- Profile picture help block-->
                             <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
                             <!-- Profile picture upload button-->
                             <input type="file" name="avatar" class="small mb-2" accept="image/png, image/jpeg">
                         </div>
                     </div>
+                        <!-- Profile picture card-->
+{#                        <div class="card m-2">#}
+{#                            <div class="card-header">Profile Picture</div>#}
+{#                            <div class="card-body text-center">#}
+{#                                <a class="btn btn-secondary" href="{% url 'create_post' %}">Add Post</a>#}
+{#                                <a class="btn btn-secondary m-1" href="{% url 'preview_author_posts' %}">My Posts</a>#}
+{#                                <a class="btn btn-danger m-1" href="{% url 'reset_password' %}">Reset Password</a>#}
+{##}
+{#                            </div>#}
+{#                    </div>#}
                 </div>
+
                 <div class="col-xl-8">
                     <!-- Account details card-->
                     <div class="card mb-4">
                         <div class="card-header">Account Details</div>
                         <div class="card-body">
-                            <!-- Form Group (username)-->
-                            {#                            <div class="mb-3">#}
-                            {#                                <label class="small mb-1" for="inputUsername">Username (how your name will appear to#}
-                            {#                                    other users on the site)</label>#}
-                            {#                                <input class="form-control" id="inputUsername" type="text"#}
-                            {#                                       placeholder="Enter your username" name="username" value="{{ user.username }}"#}
-                            {#                                       required>#}
-                            {#                                <div class="invalid-feedback">#}
-                            {#                                    Please choose a username.#}
-                            {#                                </div>#}
-                            {#                            </div>#}
-                            <!-- Form Row-->
                             <div class="row gx-3 mb-3">
                                 <!-- Form Group (first name)-->
                                 <div class="col-md-6">
@@ -115,9 +116,9 @@
                                 <div class="card-body">
                                     <!-- Form Group (username)-->
                                     <div class="mb-3">
-                                        <label class="small mb-1" for="password">Old Password</label>
+                                        <label class="small mb-1" for="password">Current Password</label>
                                         <input class="form-control" id="password" type="text"
-                                               placeholder="Enter your username" name="password" required>
+                                               placeholder="Enter current password" name="password" required>
                                         <div class="invalid-feedback">
                                             Please choose a username.
                                         </div>
@@ -126,9 +127,9 @@
                                     <div class="row gx-3 mb-3">
                                         <!-- Form Group (first name)-->
                                         <div class="col-md-6">
-                                            <label class="small mb-1" for="new_password">First name</label>
+                                            <label class="small mb-1" for="new_password">New Password</label>
                                             <input class="form-control" id="new_password" type="text"
-                                                   placeholder="Enter your first name" name="new_password" required>
+                                                   placeholder="Enter new password" name="new_password" required>
                                             <div class="invalid-feedback">
                                                 Please provide a new password.
                                             </div>
@@ -138,7 +139,7 @@
                                             <label class="small mb-1" for="confirm_password">Confirm New
                                                 Password</label>
                                             <input class="form-control" id="confirm_password" type="text"
-                                                   placeholder="Confirm your password" name="confirm_password" required>
+                                                   placeholder="Confirm new password" name="confirm_password" required>
                                             <div class="invalid-feedback">
                                                 Please Confirm your new password.
                                             </div>

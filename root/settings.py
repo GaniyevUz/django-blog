@@ -11,15 +11,20 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
+import environ
+
+env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-utp@(ogpnfqn-10kj@(t0iibb)ftt+)9*9jkc1*7p0u!y!%+-b"
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,8 +44,11 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'fontawesomefree',
-    # 'crispy_forms',
-    # 'crispy_bootstrap5'
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.telegram',
+
 ]
 
 MIDDLEWARE = [
@@ -81,12 +89,12 @@ WSGI_APPLICATION = "root.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django_blog',
-        'USER': 'postgres',
-        'PASSWORD': '1',
-        'HOST': 'localhost',
-        'PORT': 5432
+        'ENGINE': env('DATABASE_ENGINE'),
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST', default='localhost'),
+        'PORT': env('DATABASE_PORT')
     }
 }
 
@@ -194,10 +202,10 @@ DJANGORESIZED_DEFAULT_FORCE_FORMAT = 'JPEG'
 DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'JPEG': ".jpg", 'PNG': '.png'}
 # DJANGORESIZED_DEFAULT_NORMALIZE_ROTATION = True
 
-EMAIL_HOST_USER = 'ganiyevuzb@gmail.com'
-EMAIL_HOST_PASSWORD = 'wqrcsuniiyagwrpe'
-EMAIL_PORT = '587'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_HOST = env('EMAIL_HOST')
 EMAIL_USE_TLS = True
 
 AUTH_USER_MODEL = 'apps.User'

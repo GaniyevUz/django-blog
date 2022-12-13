@@ -41,12 +41,10 @@
                 <div class="col-12 col-md-6">
                     <div class="contact-us__form">
                         <h3 class="contact-title">LEAVE A MESSAGE</h3>
-                        <form action="{% url 'contact' %}" method="post">
+                        <form action="{% url 'contact' %}" method="post" name="contact">
                             {% csrf_token %}
-                            <input type="text" placeholder="Name" name="name"/>
-                            <input type="email" placeholder="Email" name="email"/>
                             <input type="text" placeholder="Subject" name="subject"/>
-                            <textarea name="message" cols="30" rows="8" placeholder="Message"></textarea>
+                            <textarea name="text" cols="30" rows="8" placeholder="Message"></textarea>
                             <button type="submit" class="btn -normal">Send message</button>
                         </form>
                     </div>
@@ -72,6 +70,27 @@
             </div>
         </div>
     </div>
-{% endblock %}
+    {% if type == 'success' %}
+        <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Your Feedback Sent Successfully!',
+                text: 'Thanks so much for sharing your experience with us.',
+                footer: 'We hope to see you again soon!',
+                {#background: #ff0ff#}
+            })
+        </script>
+    {% elif type == 'auth_error' %}
+        <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'You must logged in!',
+                text: 'We appreciate you sending us your feedback but you should be our member to send your feedback',
+                footer: '<a href="{% url 'login' %}">Join us</a>'
+            })
+        </script>
+    {% endif %}
 
-  
+{% endblock %}

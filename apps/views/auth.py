@@ -1,19 +1,35 @@
-from django.contrib import messages
-from django.contrib.auth import login
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
-from django.contrib.sites.shortcuts import get_current_site
+from django.views import View
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.contrib.auth import login, logout, authenticate
 from django.urls import reverse_lazy, reverse
-from django.utils.encoding import force_str
-from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.views import LoginView
+from django.utils.encoding import force_str, force_bytes
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import ListView, DetailView, FormView, CreateView, UpdateView, TemplateView
+from apps.forms import CustomLoginForm, RegisterForm, CreatePostForm, UserForm, ChangePasswordForm, ResetPasswordForm
 
-from apps.forms import CustomLoginForm, RegisterForm, CreatePostForm, UserForm, ChangePasswordForm
 from apps.models import Category, Post, Comment, User
-from apps.utils.tasks import send_to_gmail
-from apps.utils.token import account_activation_token
+from apps.utils import send_to_gmail, one_time_token
+
+
+class AccountSettingMixin(View):
+    def check_one_time_link(self, data):
+        uid64 = data.get('uid64')
+        token = data.get('token')
+        try:
+            uid = force_str(urlsafe_base64_decode(uid64))
+            user = User.objects.get(pk=uid)
+        except Exception as e:
+            print(e)
+            user = None
+        if user is not None and one_time_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return user
+        return False
 
 
 class AuthorPostListView(LoginRequiredMixin, ListView):
@@ -24,10 +40,9 @@ class AuthorPostListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
-        slug = self.request.GET.get('category')
-        context['url'] = reverse('category')
+
+        context['url'] = reverse('preview_author_posts')
         context['owner_post'] = True
-        context['category'] = Category.objects.filter(slug=slug).first()
         return context
 
     def get_queryset(self):
@@ -44,9 +59,7 @@ class CustomLoginView(LoginView):
     template_name = 'apps/auth/login.html'
     fields = '__all__'
     redirect_authenticated_user = True
-
-    def get_success_url(self):
-        return reverse_lazy('index')
+    next_page = reverse_lazy('index')
 
 
 class RegisterView(FormView):
@@ -57,22 +70,18 @@ class RegisterView(FormView):
 
     def form_valid(self, form):
         user = form.save()
-        if user is not None:
-            # send_verification(self.request, user)
+        if user:
             current_site = get_current_site(self.request)
             send_to_gmail.apply_async(
-                args=[form.data.get('email'), current_site.domain, 'forgot'],
+                args=[form.data.get('email'), current_site.domain],
                 countdown=5
             )
-            return render(self.request, 'apps/auth/register.html',
-                          {'title': 'Account activation', 'context': 'Check your email'})
+            return render(self.request, 'apps/auth/register.html', {'success': True})
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        context = {
-            'forms': form
-        }
-        return render(self.request, self.template_name, context)
+        context = self.get_context_data(form=self.form_class)
+        return self.render_to_response(context)
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -80,15 +89,62 @@ class RegisterView(FormView):
         return super().get(request, *args, **kwargs)
 
 
-class ChangePasswordView(UpdateView):
+class ChangePasswordView(AccountSettingMixin, UpdateView):
     form_class = ChangePasswordForm
     success_url = reverse_lazy('index')
+    template_name = 'apps/auth/profile.html'
+
+    def form_valid(self, form):
+        username = self.request.user.username
+        valid_form = super().form_valid(form)
+        password = form.cleaned_data.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            login(self.request, user)
+        return valid_form
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
+class ResetPasswordView(AccountSettingMixin, UpdateView):
+    template_name = 'apps/auth/reset-password.html'
+    success_url = reverse_lazy('index')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def post(self, request, *args, **kwargs):
+        if 'save_password' in request.POST:
+            form = ResetPasswordForm(request.POST)
+            if form.is_valid():
+                form.save()
+            return redirect('login')
+
+        email = self.request.POST.get('email')
+        current_site = get_current_site(self.request)
+        if user := User.objects.get(email=email):
+            user.is_active = False
+            user.save()
+            send_to_gmail.apply_async(
+                args=[email, current_site.domain, 'reset'],
+                countdown=5
+            )
+            return render(request, self.template_name, {'type': 'valid'})
+        return super().post(self, request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('uid64') and request.GET.get('token'):
+            if user := self.check_one_time_link(request.GET):
+                return render(request, self.template_name,
+                              {'reset_password_user': urlsafe_base64_encode(force_bytes(str(user.pk)))})
+            return render(request, self.template_name, {'type': 'expired'})
+        return render(request, self.template_name)
 
 
 class ProfileView(UpdateView):
     template_name = 'apps/auth/profile.html'
     form_class = UserForm
-    model = User
     success_url = reverse_lazy('profile')
 
     def get(self, request, **kwargs):
@@ -102,35 +158,17 @@ class ProfileView(UpdateView):
         return self.request.user
 
 
-class ActivateEmailView(TemplateView):
+class ActivateEmailView(AccountSettingMixin, TemplateView):
     template_name = 'apps/auth/temp.html'
 
     def get(self, request, *args, **kwargs):
-        uid = kwargs.get('uid64')
-        token = kwargs.get('token')
-
-        try:
-            uid = force_str(urlsafe_base64_decode(uid))
-            user = User.objects.get(pk=uid)
-        except Exception as e:
-            print(e)
-            user = None
-        if user is not None and account_activation_token.check_token(user, token):
+        if user := self.check_one_time_link(kwargs):
             user.is_active = True
             user.save()
             login(request, user)
-            messages.add_message(
-                request=request,
-                level=messages.SUCCESS,
-                message="Your account successfully activated!"
-            )
             return redirect('index')
         else:
             return HttpResponse('Activation link is invalid!')
-
-
-def entry_not_found(request, exception, template_name='404.html'):
-    return render(request, template_name)
 
 
 class CreatePostView(LoginRequiredMixin, CreateView):
@@ -155,8 +193,7 @@ class PreviewDetailFormPostView(LoginRequiredMixin, DetailView):
     context_object_name = 'post'
 
     def dispatch(self, request, *args, **kwargs):
-        user = request.user
-        if user.is_superuser:
+        if request.user.is_superuser:
             return super().dispatch(request, *args, **kwargs)
 
         return render(request, 'apps/404.html')

@@ -7,17 +7,21 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %}{% endblock %}</title>
 
-    <link rel="stylesheet" href="{% static 'apps/auth/css/material-design-iconic-font.min.css' %}">
-    <link rel="stylesheet" href="{% static 'apps/assets/css/bootstrap.min.css' %}"/>
-    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="{% static 'apps/auth/css/style.css' %}">
-    <meta name="robots" content="noindex, follow">
+    {% include 'apps/parts/css.html' %}
 </head>
 <body>
-<div class="main">
-    {% block main_content %}{% endblock %}
+<div id="load">
+    <div class="load__content">
+        <div class="load__icon"><img src="{% static 'apps/assets/images/icons/load.gif' %}" alt="Loading icon"/></div>
+    </div>
 </div>
 
-<script src="{% static 'apps/auth/js/beacon.js' %}"></script>
+{% include 'apps/parts/header.html' %}
+<!-- Main Section starts here -->
+<div id="content">
+    {% block main_content %}{% endblock %}
+</div>
+{% include 'apps/parts/javascript.html' %}
+
 </body>
 </html>

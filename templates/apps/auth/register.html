@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Sin Up</title>
+    <link rel="stylesheet" href="{% static 'apps/assets/css/bootstrap.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'apps/auth/register.css' %}">
 </head>
 <body>
 <div class="box">
-    <form autocomplete="off" method="post" action="{% url 'register' %}">
+    <form method="post" action="{% url 'register' %}">
         <h2>Sign Up</h2>
         {% csrf_token %}
-        {% if form.non_field_errors %}
+        {% if form %}
             {% for error in form.non_field_errors %}
                 <div class="alert alert-danger" style="color: rgba(255,0,0,0.88);">
                     <h3>{{ error|escape }}</h3>
@@ -44,21 +45,23 @@
             <i></i>
         </div>
         <div class="links">
-            <a></a>
+
+            </a>
             <a href="{% url 'login' %}">Sign In</a>
         </div>
         <input type="submit" value="Sign Up">
     </form>
 </div>
-{% if context %}
-
-    <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+{% if success %}
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+    {#    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-borderless@3/borderless.css" rel="stylesheet">#}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script>
         Swal.fire({
             icon: 'success',
             title: 'Your Mail Sent Successfully!',
-            text: 'We’ll will send you a confirmation letter shortly. Thank you for your patience.',
-            footer: '<a href="">Why do I have this issue?</a>'
+            html: '<p class="text-center text-white">We’ll will send you a confirmation letter shortly. Thank you for your patience.</p>',
+            {#footer: '<a href="">?</a>'#}
         })
     </script>
 {% endif %}

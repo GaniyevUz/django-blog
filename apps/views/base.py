@@ -1,27 +1,25 @@
-from django.shortcuts import redirect, get_object_or_404
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, FormView
 
-from apps.forms import CreateCommentForm
-from apps.models import Category, Post, About, Comment, Contact, PostViewHistory
+from apps.forms import CreateCommentForm, ContactForm
+from apps.models import Post, About, Comment, PostViewHistory
 
 
 class IndexView(ListView):
-    queryset = Category.objects.all()
-    context_object_name = 'categories'
+    queryset = Post.objects.order_by('-created_at').first()
+    context_object_name = 'main_post'
     template_name = 'apps/index.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
-        context['post'] = Post.objects.order_by('-created_at').first()
         context['url'] = reverse('category')
         context['posts'] = Post.objects.order_by('-created_at')[1:5]
         return context
 
 
 class PostListView(ListView):
-    queryset = Post.objects.filter(status__iexact='active').order_by('-created_at')
+    queryset = Post.objects.filter(status__iexact=Post.Status.ACTIVE).order_by('-created_at')
     template_name = 'apps/blog-category.html'
     context_object_name = 'posts'
     paginate_by = 5
@@ -46,12 +44,22 @@ class AboutView(ListView):
         return About.objects.first()
 
 
-class ContactView(ListView):
+class ContactView(FormView):
     template_name = 'apps/contact.html'
-    # template_name = 'apps/auth/temp.html'
-    model = Contact
-    fields = '__all__'
-    context_object_name = 'contact'
+    form_class = ContactForm
+
+    def form_valid(self, form):
+        if self.request.user.is_anonymous:
+            return render(self.request, self.template_name, {'type': 'auth_error'})
+        form.instance.user = self.request.user
+        form.save()
+        return render(self.request, self.template_name, {'type': 'success'})
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
+
+    def get_success_url(self):
+        return redirect('contact')
 
 
 class DetailFormPostView(FormView, DetailView):
@@ -62,7 +70,7 @@ class DetailFormPostView(FormView, DetailView):
 
     def get(self, request, *args, **kwargs):
         slug = kwargs.get('slug')
-        post = Post.objects.get(slug=slug)
+        post = get_object_or_404(Post, slug=slug)
         if post:
             post.update_views()
             PostViewHistory.objects.create(post=post).save()
@@ -81,3 +89,7 @@ class DetailFormPostView(FormView, DetailView):
             comment = Comment.objects.create(**data)
             comment.save()
         return redirect('post_form_detail', slug)
+
+
+def entry_not_found(request, exception, template_name='404.html'):
+    return render(request, template_name)

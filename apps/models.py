@@ -21,6 +21,10 @@ class User(AbstractUser):
         verbose_name = 'Foydalanuvchi'
         verbose_name_plural = 'Foydalanuvchilar'
 
+    @property
+    def full_name(self):
+        return self.first_name + ' ' + self.last_name
+
 
 class About(Model):
     image = ImageField(upload_to='')
@@ -155,17 +159,17 @@ class Comment(Model):
 
 
 class Contact(Model):
-    name = CharField(max_length=255)
-    email = EmailField(max_length=155)
+    user = ForeignKey(User, CASCADE)
     subject = CharField(max_length=100)
     text = TextField()
+    status = BooleanField(default=False, verbose_name='is answered')
 
     class Meta:
-        verbose_name = 'Kontakt'
-        verbose_name_plural = 'Kontaktlar'
+        verbose_name = 'Xabar'
+        verbose_name_plural = 'Xabarlar'
 
     def __str__(self):
-        return f'{self.name} {self.email}'
+        return self.subject
 
 
 class PostViewHistory(Model):
