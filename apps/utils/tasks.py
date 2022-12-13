@@ -43,7 +43,7 @@ def send_to_gmail(email, domain, _type='activation'):
 @shared_task
 def send_to_contact(email):
     user = User.objects.get(email=email)
-    subject = 'Activate your account'
+    subject = 'Thanks so much for sharing your experience with us.'
     message = render_to_string('admin/custom/email_template.html', {})
 
     # from_email = EMAIL_HOST_USER
