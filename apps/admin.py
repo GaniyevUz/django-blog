@@ -18,7 +18,7 @@ class CategoryAdmin(ModelAdmin):
 @admin.register(Post)
 class PostAdmin(ModelAdmin):
     search_fields = ('category__name', 'title')
-    list_display = ('title', 'categories', 'status_icon', 'post_pic', 'created_at', 'status_button')
+    list_display = ('post_title', 'categories', 'status_icon', 'post_pic', 'created_at', 'status_button')
     exclude = ('slug', 'views')
     list_filter = ('category', 'status', 'created_at')
     readonly_fields = ('status',)
@@ -97,7 +97,6 @@ class UserAdmin(ModelAdmin):
 
 @admin.register(Contact)
 class ContactAdmin(ModelAdmin):
-
     change_form_template = 'admin/custom/change_form_message.html'
     list_display = ('subject', 'user', 'status')
     exclude = ('status',)

@@ -90,24 +90,25 @@ class Post(Model):
     author = ForeignKey(User, SET_NULL, null=True, blank=True)
     pic = ResizedImageField(upload_to='posts/')
     category = ManyToManyField(Category)
-    created_at = DateTimeField(auto_now=True)
+    created_at = DateTimeField(auto_now_add=True)
     views = BigIntegerField(default=0)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
-            while Post.objects.filter(slug=self.slug).exists():
-                slug = Post.objects.filter(slug=self.slug).first().slug
-                if '-' in slug:
-                    try:
-                        if slug.split('-')[-1] in self.title:
-                            self.slug += '-1'
-                        else:
-                            self.slug = '-'.join(slug.split('-')[:-1]) + '-' + str(int(slug.split('-')[-1]) + 1)
-                    except:
-                        self.slug = slug + '-1'
-                else:
-                    self.slug += '-1'
+        # if not self.slug:
+        self.slug = slugify(self.title)
+        while Post.objects.filter(slug=self.slug).exists():
+            slug = Post.objects.filter(slug=self.slug).first().slug
+            if '-' in slug:
+                try:
+                    if slug.split('-')[-1] in self.title:
+                        self.slug += '-1'
+                    else:
+                        self.slug = '-'.join(slug.split('-')[:-1]) + '-' + str(int(slug.split('-')[-1]) + 1)
+                except:
+                    self.slug = slug + '-1'
+            else:
+                self.slug += '-1'
+
         super().save(*args, **kwargs)
 
     def update_views(self, *args, **kwargs):
@@ -118,6 +119,10 @@ class Post(Model):
     @property
     def comment_count(self):
         return self.comment_set.count()
+
+    @property
+    def post_title(self):
+        return self.title[:50] + '...'
 
     def __str__(self):
         return self.title
@@ -148,7 +153,7 @@ class Comment(Model):
     text = TextField()
     post = ForeignKey(Post, CASCADE)
     author = ForeignKey(User, CASCADE)
-    created_at = DateTimeField(auto_now=True)
+    created_at = DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Izox'
@@ -174,7 +179,7 @@ class Contact(Model):
 
 class PostViewHistory(Model):
     post = ForeignKey(Post, CASCADE)
-    viewed_at = DateField(auto_now=True)
+    viewed_at = DateField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.post.title} at {self.viewed_at}'
