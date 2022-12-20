@@ -1,5 +1,4 @@
-
-# Bitly - url shorter website to make long URLs easier
+# Fuse - Minimalistic Blog Site
 ### Features
  - Login & Registration 
  - Activate account via email `using one time link` 
@@ -8,10 +7,13 @@
  - Fully customized admin panel and user profile page with password change and reset features
  - Generates PDF version of any post that you want (it's comments included)
  - Trending posts witch viewed the most last month
+ - Responsive Pangination
+ - Posts that Canceled more than 7 days age will be deleted automatically
  - and more...
 ### Used  Tools & Services
 - Celery
 - Redis
+- Cron
 - PostgreSQL
 - Docker
 - SweetAlert2
