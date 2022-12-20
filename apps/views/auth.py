@@ -13,6 +13,7 @@ from apps.forms import CustomLoginForm, RegisterForm, CreatePostForm, UserForm, 
 
 from apps.models import Category, Post, Comment, User
 from apps.utils import send_to_gmail, one_time_token
+from apps.utils.sms import send, check
 
 
 class AccountSettingMixin(View):
@@ -81,7 +82,7 @@ class RegisterView(FormView):
 
     def form_invalid(self, form):
         context = self.get_context_data(form=self.form_class)
-        return self.render_to_response(context)
+        return render(self.request, self.template_name, context)
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -89,15 +90,16 @@ class RegisterView(FormView):
         return super().get(request, *args, **kwargs)
 
 
-class ChangePasswordView(AccountSettingMixin, UpdateView):
+class ChangePasswordView(LoginRequiredMixin, UpdateView):
     form_class = ChangePasswordForm
     success_url = reverse_lazy('index')
-    template_name = 'apps/auth/profile.html'
+    template_name = 'apps/auth/change-password.html'
+    login_url = reverse_lazy('login')
 
     def form_valid(self, form):
         username = self.request.user.username
         valid_form = super().form_valid(form)
-        password = form.cleaned_data.get('password')
+        password = form.data.get('new_password')
         user = authenticate(username=username, password=password)
         if user:
             login(self.request, user)
@@ -142,14 +144,16 @@ class ResetPasswordView(AccountSettingMixin, UpdateView):
         return render(request, self.template_name)
 
 
-class ProfileView(UpdateView):
+class ProfileView(LoginRequiredMixin, UpdateView):
     template_name = 'apps/auth/profile.html'
     form_class = UserForm
     success_url = reverse_lazy('profile')
+    login_url = reverse_lazy('login')
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
-        if self.request.user.is_anonymous:
-            return redirect('login')
         self.object = self.request.user
         context = self.get_context_data(object=self.object, form=self.form_class)
         return self.render_to_response(context)
@@ -203,3 +207,33 @@ class PreviewDetailFormPostView(LoginRequiredMixin, DetailView):
         context['post_categories'] = Category.objects.filter(post=context.get('post'))
         context['comments'] = Comment.objects.filter(post__slug=self.request.path.split('/')[-1])
         return context
+
+
+class VerifySMSView(LoginRequiredMixin, TemplateView):
+    template_name = 'apps/auth/change-password.html'
+    login_url = reverse_lazy('login')
+
+    def post(self, request, *args, **kwargs):
+        phone = request.POST.get('phone')
+        if request.POST.get('send'):
+            send(phone)
+            user = request.user
+            user.phone = phone
+            user.save()
+            return render(request, self.template_name, {'verify': 'ok'})
+        elif request.POST.get('verify'):
+            code = request.POST.get('code')
+            if check(request.user.phone, code):
+                user = request.user
+                user.is_staff = True
+                user.save()
+                return render(request, self.template_name, {'verify': 'no', 'type': 'yes'})
+            return render(request, self.template_name, {'verify': 'no', 'type': 'no'})
+        return render(request, self.template_name, {'verify': 'no'})
+
+
+class DeleteAccountView(View):
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            request.user.delete()
+        return redirect('register')

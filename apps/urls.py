@@ -1,9 +1,11 @@
-from django.contrib.auth.views import LogoutView
 from django.urls import path
+from django.contrib.auth.views import LogoutView
+from django.views.decorators.csrf import csrf_exempt
 
 from apps.views import IndexView, AboutView, ContactView, PostListView, CustomLoginView, RegisterView, \
     DetailFormPostView, CreatePostView, PreviewDetailFormPostView, AuthorPostListView, ProfileView, ActivateEmailView, \
-    ChangePasswordView, ResetPasswordView
+    ChangePasswordView, ResetPasswordView, GeneratePdf, SearchView
+from apps.views.auth import VerifySMSView, DeleteAccountView
 
 urlpatterns = [
     path('login', CustomLoginView.as_view(), name='login'),
@@ -12,6 +14,8 @@ urlpatterns = [
     path('profile', ProfileView.as_view(), name='profile'),
     path('change-password', ChangePasswordView.as_view(), name='change_password'),
     path('reset-password', ResetPasswordView.as_view(), name='reset_password'),
+    path('profile/verify-phone/', VerifySMSView.as_view(), name='verify_phone'),
+    path('profile/delete/', csrf_exempt(DeleteAccountView.as_view()), name='delete_account'),
 
     path('about', AboutView.as_view(), name='about'),
     path('contact', ContactView.as_view(), name='contact'),
@@ -24,4 +28,7 @@ urlpatterns = [
 
     path('activate/<str:uid64>/<str:token>', ActivateEmailView.as_view(), name='activate_user'),
     path('', IndexView.as_view(), name='index'),
+    path('search', csrf_exempt(SearchView.as_view()), name='search'),
+    path('pdf/<int:pk>', GeneratePdf.as_view(), name='make_pdf'),
+
 ]

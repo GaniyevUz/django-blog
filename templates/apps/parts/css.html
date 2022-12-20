@@ -4,11 +4,12 @@
 <link rel="stylesheet" href="https://kit-pro.fontawesome.com/releases/v5.13.0/css/pro.min.css"/>
 <link rel="shortcut icon" type="image/png" href="{% static 'apps/assets/images/favicon.png' %}"/>
 <!--build:css apps/assets/css/styles.min.css-->
+
+<link rel="stylesheet" href="{% static 'apps/assets/css/style.css' %}"/>
 <link rel="stylesheet" href="{% static 'apps/assets/css/elegant.css' %}"/>
 <link rel="stylesheet" href="{% static 'apps/assets/css/custom_bootstrap.css' %}"/>
 <link rel="stylesheet" href="{% static 'apps/assets/css/slick.css' %}"/>
 <link rel="stylesheet" href="{% static 'apps/assets/css/plyr.min.css' %}"/>
-<link rel="stylesheet" href="{% static 'apps/assets/css/style.css' %}"/>
 <link rel="stylesheet" href="{% static 'apps/assets/css/bootstrap.min.css' %}"/>
 <style>
     * {
@@ -117,4 +118,32 @@
   color: #ff5d94;
 }
 
+p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    word-break: break-all;
+}
+
+.nav-borders .nav-link.active {
+    color: #0061f2;
+    border-bottom-color: #0061f2;
+}
+.nav-borders .nav-link {
+    color: #69707a;
+    border-bottom-width: 0.125rem;
+    border-bottom-style: solid;
+    border-bottom-color: transparent;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.btn-danger-soft {
+    color: #000;
+    background-color: #f1e0e3;
+    border-color: #f1e0e3;
+}
 </style>

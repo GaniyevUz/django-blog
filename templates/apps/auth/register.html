@@ -1,57 +1,89 @@
 {% load static %}
+{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sin Up</title>
-    <link rel="stylesheet" href="{% static 'apps/assets/css/bootstrap.min.css' %}"/>
-    <link rel="stylesheet" href="{% static 'apps/auth/register.css' %}">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration </title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'apps/auth/style.css' %}">
+
+    <!-- Boxicons CSS -->
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+
 </head>
 <body>
-<div class="box">
-    <form method="post" action="{% url 'register' %}">
-        <h2>Sign Up</h2>
-        {% csrf_token %}
-        {% if form %}
-            {% for error in form.non_field_errors %}
-                <div class="alert alert-danger" style="color: rgba(255,0,0,0.88);">
-                    <h3>{{ error|escape }}</h3>
+<section class="container forms">
+    <div class="form">
+        <div class="form-content">
+            <header>Signup</header>
+            <form action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+                {% if form %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger" style="color: rgba(255,0,0,0.88);">
+                            <h5>{{ error|escape }}</h5>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="field input-field">
+                    <input type="email" placeholder="Your Email" name="email" class="input">
                 </div>
-            {% endfor %}
-        {% endif %}
-        <div class="inputBox">
-            <input type="text" required="required" name="username">
-            <span>Username</span>
-            <i></i>
-        </div>
-        <div class="inputBox">
-            <input type="email" name="email" required="required">
-            <span>Email</span>
-            <i></i>
-        </div>
-        <div class="inputBox">
-            <input type="tel" name="phone" required="required">
-            <span>Phone</span>
-            <i></i>
-        </div>
-        <div class="inputBox">
-            <input type="password" name="password" required="required">
-            <span>Password</span>
-            <i class="fa fa-instagram-square"></i>
-        </div>
-        <div class="inputBox">
-            <input type="password" name="confirm_password" required="required">
-            <span>Confirm Password</span>
-            <i></i>
-        </div>
-        <div class="links">
 
-            </a>
-            <a href="{% url 'login' %}">Sign In</a>
+                <div class="field input-field">
+                    <input type="text" placeholder="Your Username" name="username" class="input">
+
+                </div>
+
+                <div class="field input-field">
+                    <input type="tel" placeholder="Your Phone Number" name="phone" class="input">
+                </div>
+
+                <div class="field input-field">
+                    <input type="password" placeholder="Create password" name="password" class="password">
+                </div>
+
+                <div class="field input-field">
+                    <input type="password" placeholder="Confirm password" name="confirm_password" class="password">
+                    <i class='bx bx-hide eye-icon'></i>
+                </div>
+
+                <div class="field button-field">
+                    <button>Signup</button>
+                </div>
+            </form>
+
+            <div class="form-link">
+                <span>Already have an account? <a href="{% url 'login' %}" class="link login-link">Login</a></span>
+            </div>
         </div>
-        <input type="submit" value="Sign Up">
-    </form>
-</div>
+
+        <div class="line"></div>
+        <form action="{% provider_login_url 'github' %}" method="post">
+            {% csrf_token %}
+            <div class="media-options">
+                <a class="field google">
+                    <button style="background-color: #1e1e2d" type="submit"><i class='bx bxl-github facebook-icon'></i>
+                        Continue with GitHub
+                    </button>
+                </a>
+            </div>
+        </form>
+        <form action="{% provider_login_url 'google' %}" method="post">
+            {% csrf_token %}
+            <div class="media-options">
+                <a class="field google">
+                    <button style="background-color: #a31d00" type="submit"><i class='bx bxl-google facebook-icon'></i>
+                        Continue with Google
+                    </button>
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
 {% if success %}
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
     {#    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-borderless@3/borderless.css" rel="stylesheet">#}
@@ -65,5 +97,7 @@
         })
     </script>
 {% endif %}
+<!-- JavaScript -->
+<script src="{% static 'apps/auth/script.js' %}"></script>
 </body>
 </html>

@@ -1,9 +1,13 @@
-{% extends 'apps/parts/base.html' %}
+{% extends 'apps/auth/base.html' %}
 
 {% block title %}Profile - {{ user.full_name }}{% endblock %}
 
 {% block main_content %}
     <div class="container px-4 mt-4">
+            <nav class="nav nav-borders">
+            <a class="nav-link  ms-0" href="{% url 'profile' %}">Profile</a>
+            <a class="nav-link  ms-0" href="{% url 'change_password' %}">Security</a>
+        </nav>
         <hr class="mt-0 mb-4">
         <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data" class="needs-validation"
               novalidate>
@@ -80,14 +84,17 @@
                                 </div>
                                 <!-- Form Group (location)-->
                                 <div class="col-md-6">
-                                    <label class="small mb-1" for="inputPhone">Phone number</label>
-                                    <input class="form-control" id="inputPhone" type="tel"
+                                    <label class="small mb-1" for="phone">Phone number {% if not user.is_staff %}<span class="badge badge-danger">Not verified</span>{% endif %}</label>
+                                    <input class="form-control" id="phone" type="tel"
                                            placeholder="Enter your phone number" name="phone" value="{{ user.phone }}"
                                            required>
 
                                     <div class="invalid-feedback">
                                         Please provide a phone number.
                                     </div>
+                                {% if not user.is_staff %}
+                                    <a href="{% url 'change_password' %}" class="btn btn-warning mt-2">Verify</a>
+                                {% endif %}
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -102,57 +109,5 @@
                 </div>
             </div>
         </form>
-        <hr class="mt-0 mb-4">
-        <div class="row d-flex justify-content-center">
-            <div class="col-md-8">
-                <form method="post" action="{% url 'change_password' %}" enctype="multipart/form-data" class="needs-validation" novalidate>
-
-                    <div class="row pb-4">
-                        {% csrf_token %}
-                        <div class="col-xl-8">
-                            <!-- Account details card-->
-                            <div class="card mb-4">
-                                <div class="card-header">Change password</div>
-                                <div class="card-body">
-                                    <!-- Form Group (username)-->
-                                    <div class="mb-3">
-                                        <label class="small mb-1" for="password">Current Password</label>
-                                        <input class="form-control" id="password" type="text"
-                                               placeholder="Enter current password" name="password" required>
-                                        <div class="invalid-feedback">
-                                            Please choose a username.
-                                        </div>
-                                    </div>
-                                    <!-- Form Row-->
-                                    <div class="row gx-3 mb-3">
-                                        <!-- Form Group (first name)-->
-                                        <div class="col-md-6">
-                                            <label class="small mb-1" for="new_password">New Password</label>
-                                            <input class="form-control" id="new_password" type="text"
-                                                   placeholder="Enter new password" name="new_password" required>
-                                            <div class="invalid-feedback">
-                                                Please provide a new password.
-                                            </div>
-                                        </div>
-                                        <!-- Form Group (last name)-->
-                                        <div class="col-md-6">
-                                            <label class="small mb-1" for="confirm_password">Confirm New
-                                                Password</label>
-                                            <input class="form-control" id="confirm_password" type="text"
-                                                   placeholder="Confirm new password" name="confirm_password" required>
-                                            <div class="invalid-feedback">
-                                                Please Confirm your new password.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Save changes button-->
-                                    <input class="btn btn-info" type="submit" value="Save changes">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
 {% endblock %}

@@ -9,13 +9,23 @@
                     {% if category %}
                         <div class="category__header">
                             <div class="category__header__text">
-                                <h5>Categories:</h5>
                                 <a href="{{ url }}?category={{ category.slug }}">{{ category.name }}</a>
+
                             </div>
                             <div class="category__header__filter">
                             </div>
                         </div>
+                    {% elif owner_post %}
+                        <div class="category__header">
+                            <div class="category__header__text">
+                                <h5>Total blogs that you posted: </h5>
+                            </div>
+                            <div class="category__header__filter">
+                                <h5>{{ user.post_set.count }}</h5>
+                            </div>
+                        </div>
                     {% endif %}
+
                     <div class="category_content">
                         <div class="col-12">
                             {% for post in posts %}
@@ -64,9 +74,9 @@
                                 {% if page_obj.has_previous %}
                                     <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
                                 {% else %}
-                                    {#                                    <li class="disabled"><a>&laquo;</a></li>#}
+                                    {#                                                                        <li class="disabled"><a>&laquo;</a></li>#}
                                 {% endif %}
-                                {% for i in page_obj.paginator.page_range %}
+                                {% for i in pagination_range %}
                                     {% if page_obj.number == i %}
                                         <li class="active"><a>{{ i }}</a>
                                         </li>

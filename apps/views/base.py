@@ -1,31 +1,53 @@
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, FormView
+from django.views import View
+from django.views.generic import ListView, DetailView, FormView, TemplateView
 
 from apps.forms import CreateCommentForm, ContactForm
 from apps.models import Post, About, Comment, PostViewHistory
+from apps.utils.page2pdf import render_to_pdf
+
+
+class SearchView(View):
+    def post(self, request, *args, **kwargs):
+        like = request.POST.get('like')
+        data = {
+            'posts': list(Post.objects.filter(title__icontains=like).values('title', 'pic', 'slug')[:5])
+        }
+        return JsonResponse(data)
 
 
 class IndexView(ListView):
-    queryset = Post.objects.order_by('-created_at').first()
+    queryset = Post.active.first()
     context_object_name = 'main_post'
     template_name = 'apps/index.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         context['url'] = reverse('category')
-        context['posts'] = Post.objects.order_by('-created_at')[1:5]
+        context['posts'] = Post.active.all()[1:5]
         return context
 
 
 class PostListView(ListView):
-    queryset = Post.objects.filter(status__iexact=Post.Status.ACTIVE).order_by('-created_at')
+    queryset = Post.active.all()
     template_name = 'apps/blog-category.html'
     context_object_name = 'posts'
     paginate_by = 5
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
+        pagination = context['page_obj']
+        paginator = pagination.paginator
+        page = pagination.number
+        left = (int(page) - 4)
+        if left < 1:
+            left = 1
+        right = (int(page) + 5)
+        if right > paginator.num_pages:
+            right = paginator.num_pages + 1
+        context['pagination_range'] = range(left, right)
         context['url'] = reverse('category')
         return context
 
@@ -91,5 +113,19 @@ class DetailFormPostView(FormView, DetailView):
         return redirect('post_form_detail', slug)
 
 
+class GeneratePdf(DetailView):
+    slug_url_kwarg = 'pk'
+
+    def get(self, request, *args, **kwargs):
+        post = Post.objects.get(pk=kwargs.get('pk'))
+        data = {
+            'post': post,
+        }
+        pdf = render_to_pdf('page2pdf.html', data)
+        return HttpResponse(pdf, content_type='application/pdf')
+
+
 def entry_not_found(request, exception, template_name='404.html'):
     return render(request, template_name)
+class InActiveView(TemplateView):
+    template_name = 'apps/auth/inactive.html'

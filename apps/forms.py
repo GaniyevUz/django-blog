@@ -61,7 +61,7 @@ class ChangePasswordForm(ModelForm):
         confirm_password = self.data.get('confirm_password')
         if new_password == confirm_password:
             if user.check_password(password):
-                return new_password
+                return make_password(new_password)
             raise ValidationError('Old password isn\'t correct!')
         raise ValidationError('New Password did not match!')
 

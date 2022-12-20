@@ -2,7 +2,8 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db.models import ImageField, TextField, JSONField, Model, ForeignKey, DateTimeField, CharField, EmailField, \
-    SlugField, CASCADE, SET_NULL, ManyToManyField, TextChoices, BooleanField, DateField, BigIntegerField
+    SlugField, CASCADE, SET_NULL, ManyToManyField, TextChoices, BooleanField, DateField, BigIntegerField, Manager, \
+    PROTECT
 from django.utils.html import format_html
 from django.utils.text import slugify
 from django_resized import ResizedImageField
@@ -16,10 +17,6 @@ class User(AbstractUser):
     is_active = BooleanField(default=False)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$')
     phone = CharField(validators=[phone_regex], max_length=17, null=True, blank=True)
-
-    class Meta:
-        verbose_name = 'Foydalanuvchi'
-        verbose_name_plural = 'Foydalanuvchilar'
 
     @property
     def full_name(self):
@@ -36,8 +33,8 @@ class About(Model):
     social_accounts = JSONField(null=True, blank=True)
 
     class Meta:
-        verbose_name = 'Biz Haqimizda'
-        verbose_name_plural = 'Biz Haqimizda'
+        verbose_name = 'Site Info'
+        verbose_name_plural = 'Site Info'
 
     def __str__(self):
         return format_html(f'<i>{self.about[:50]}</i>')
@@ -45,7 +42,7 @@ class About(Model):
 
 class Category(Model):
     name = CharField(max_length=255)
-    image = ImageField(upload_to='category/')
+    image = ImageField(upload_to='category/', default='category.png')
     slug = SlugField(max_length=255, unique=True)
 
     def save(self, *args, **kwargs):
@@ -73,22 +70,26 @@ class Category(Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Kategoriya'
-        verbose_name_plural = 'Kategoriyalar'
+        verbose_name_plural = 'Categories'
+
+
+class ActivePostsManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=Post.Status.ACTIVE)
 
 
 class Post(Model):
     class Status(TextChoices):
-        PENDING = 'pending', 'Kutilmoqda'
-        ACTIVE = 'active', 'Faol'
-        CANCEL = 'cancel', 'Rad etilgan'
+        PENDING = 'pending', 'Pending'
+        ACTIVE = 'active', 'Active'
+        CANCEL = 'cancel', 'Cancel'
 
     title = CharField(max_length=255)
     slug = SlugField(max_length=255, unique=True)
     content = RichTextUploadingField()
     status = CharField(max_length=25, choices=Status.choices, default=Status.PENDING)
     author = ForeignKey(User, SET_NULL, null=True, blank=True)
-    pic = ResizedImageField(upload_to='posts/')
+    pic = ResizedImageField(upload_to='posts/', default='default-banner.jpg')
     category = ManyToManyField(Category)
     created_at = DateTimeField(auto_now_add=True)
     views = BigIntegerField(default=0)
@@ -127,6 +128,9 @@ class Post(Model):
     def __str__(self):
         return self.title
 
+    objects = Manager()
+    active = ActivePostsManager()
+
     def status_button(self):
         if self.status == Post.Status.PENDING:
             return format_html(
@@ -139,14 +143,13 @@ class Post(Model):
             )
         elif self.status == Post.Status.ACTIVE:
             return format_html(
-                f'''<a style="color: green; font-size: 1.10em;margin-top: 8px; margin: auto;">Tasdiqlangan</a>''')
+                f'''<a style="color: green; font-size: 1.10em;margin-top: 8px; margin: auto;">Accepted</a>''')
 
         return format_html(
-            f'''<a style="color: red; font-size: 1.10em;margin-top: 8px; margin: auto;">Tasdiqlanmagan</a>''')
+            f'''<a style="color: red; font-size: 1.10em;margin-top: 8px; margin: auto;">Canceled</a>''')
 
     class Meta:
-        verbose_name = 'Post'
-        verbose_name_plural = 'Postlar'
+        ordering = ['-created_at']
 
 
 class Comment(Model):
@@ -155,23 +158,15 @@ class Comment(Model):
     author = ForeignKey(User, CASCADE)
     created_at = DateTimeField(auto_now_add=True)
 
-    class Meta:
-        verbose_name = 'Izox'
-        verbose_name_plural = 'Izoxlar'
-
     def __str__(self):
         return format_html(f'<i>{self.text[:50]}... by {self.author.get_username()}</i>')
 
 
 class Contact(Model):
-    user = ForeignKey(User, CASCADE)
+    user = ForeignKey(User, PROTECT)
     subject = CharField(max_length=100)
     text = TextField()
     status = BooleanField(default=False, verbose_name='is answered')
-
-    class Meta:
-        verbose_name = 'Xabar'
-        verbose_name_plural = 'Xabarlar'
 
     def __str__(self):
         return self.subject

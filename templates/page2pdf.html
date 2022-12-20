@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+{% load static %}
+
+<html>
+<head>
+    <title>{{ post.title|safe }}</title>
+    {#    {% include 'apps/parts/css.html' %}#}
+    <style type="text/css">
+        body {
+            font-weight: 200;
+            font-size: 14px;
+        }
+
+        .header {
+            font-size: 20px;
+            font-weight: 100;
+            text-align: center;
+            color: #007cae;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: 100;
+            /* text-align: right;*/
+            padding: 10px 20px 0px 20px;
+        }
+
+        .title span {
+            color: #007cae;
+        }
+
+        #table td {
+            padding-top: 3px;
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+    <div class='header'>
+        <p class='title'> {{ post.title|safe }} </p>
+    </div>
+    <div>
+        {{ post.content|safe }}
+    </div>
+    <div>
+        <h3>Comments</h3>
+        <table border="1">
+            <tr style="padding-top: 3px;">
+                <th>Author</th>
+                <th>Message</th>
+                <th>Date</th>
+            </tr>
+            {% for comment in post.comment_set.all %}
+                <tr id="table">
+                    <td>{% if comment.author.get_full_name %}{{ comment.author.get_full_name }}{% else %}
+                        Unknown{% endif %}</td>
+                    <td>{{ comment.text }}</td>
+                    <td>{{ comment.created_at }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+</body>
+</html>

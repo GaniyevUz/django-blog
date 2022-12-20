@@ -54,8 +54,8 @@
                                     </div>
                                 </div>
                                 {% if post.author %}
-                                    {#                                        <h5>{{ post.author.first_name }}</h5>#}
-                                    {#                                        <p>{{ post.author.bio }}</p>#}
+                                    {#                                    <h5>{{ post.author.first_name }}</h5>#}
+                                    {#                                    <p>{{ post.author.bio }}</p>#}
                                     <div class="post-footer__author">
                                         <div class="author__avatar">
                                             {% if post.author.avatar %}
@@ -65,7 +65,7 @@
                                         </div>
                                         <!-- Author Info -->
                                         <div class="author__info">
-                                            <h5>{{ post.author.first_name }}</h5>
+                                            <h5>{{ post.author.get_full_name }}</h5>
                                             <p>{{ post.author.bio }}</p>
                                         </div>
                                     </div>
@@ -77,10 +77,12 @@
                                         <div class="post-footer__comment__detail">
                                             {% for comment in post.comment_set.all %}
                                                 <div class="comment__item">
-                                                    <div class="comment__item__avatar">
-                                                        <img src="{% static 'apps/assets/images/post_detail/auth.png' %}"
-                                                             alt="Author avatar"/>
-                                                    </div>
+                                                    {% if comment.author.avatar %}
+                                                        <div class="comment__item__avatar">
+                                                            <!-- img size 150 x 150 -->
+                                                            <img src="{{ comment.author.avatar.url }}" alt="Author avatar"/>
+                                                        </div>
+                                                    {% endif %}
                                                     <div class="comment__item__content">
                                                         <div class="comment__item__content__header">
                                                             <h5>{{ comment.author.get_full_name }}</h5>
@@ -106,7 +108,7 @@
                                             {% csrf_token %}
                                             <textarea rows="5" placeholder="Message" name="message"></textarea>
                                             <div class="center">
-                                                <button class="btn btn-primary" name="comment">Submit</button>
+                                                <button class="btn btn-info" name="comment">Submit</button>
                                             </div>
                                         </form>
                                     </div>

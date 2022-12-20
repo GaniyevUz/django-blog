@@ -2,12 +2,12 @@
 <header class="theme-default">
     <div id="search-box">
         <div class="container">
-            <form action="/" method="POST">
-                <label>
-                    <input type="text" placeholder="Searching for news" name="search"/>
-                </label>
+            <form action="#" method="POST">
+                {% csrf_token %}
+                <input type="text" id="user-input" placeholder="Searching for news" name="like"/>
                 <button><i class="fas fa-arrow-right"></i></button>
             </form>
+            <ul class="list-group d-none style-2" id="replaceable-content" style="border: none"></ul>
         </div>
     </div>
     <div class="container">
@@ -48,7 +48,7 @@
                 <h4>{{ user.username }}</h4>
                 <div class="action">
                     <div class="profile" onclick="menuToggle();">
-                        <img src="{{ user.avatar.url }}"/>
+                        <img src="{% if user.avatar %}{{ user.avatar.url }}{% endif %}"/>
                     </div>
                     <div class="menu">
                         <h3>{{ user.full_name }}</h3>

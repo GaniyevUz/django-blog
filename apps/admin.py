@@ -18,11 +18,12 @@ class CategoryAdmin(ModelAdmin):
 @admin.register(Post)
 class PostAdmin(ModelAdmin):
     search_fields = ('category__name', 'title')
-    list_display = ('post_title', 'categories', 'status_icon', 'post_pic', 'created_at', 'status_button')
+    list_display = (
+        'post_title', 'categories', 'views', 'status_icon', 'post_pic', 'created_at', 'status_button', 'make_pdf')
     exclude = ('slug', 'views')
     list_filter = ('category', 'status', 'created_at')
     readonly_fields = ('status',)
-    list_per_page = 15
+    list_per_page = 10
 
     change_form_template = 'admin/custom/change_form_post.html'
 
@@ -30,7 +31,8 @@ class PostAdmin(ModelAdmin):
 
     def status_icon(self, obj):
         data = {
-            'pending': '<i class="fas fa-spinner fa-pulse" style="color: orange; font-size: 1.5em;"></i>',
+            'pending': '''<script src="https://cdn.lordicon.com/fudrjiwc.js"></script><lord-icon src="https://cdn.lordicon.com/uutnmngi.json" trigger="hover" colors="primary:#4be1ec,secondary:#cb5eee" stroke="65" style="width:30px;height:30px"></lord-icon>''',
+            # 'pending': '<i class="fas fa-spinner fa-pulse" style="color: orange; font-size: 1.5em;"></i>',
             'active': '<i class="fa-solid fa-check" style="color: green; font-size: 1.5em;"></i>',
             'cancel': '<i class="fa-solid fa-circle-xmark"  style="color: red; font-size: 1.5em;"></i>'
         }
@@ -60,9 +62,12 @@ class PostAdmin(ModelAdmin):
         if request.POST.get('view'):
             return redirect('preview_post_form_detail', obj.slug)
         elif request.POST.get('status') and request.POST.get('status') in [Post.Status.ACTIVE, Post.Status.CANCEL]:
-            obj.status = request.POST.get('status').lower()
+            obj.status = request.POST.get('status')
             obj.save()
         return HttpResponseRedirect("./")
+
+    def make_pdf(self, obj: Post):
+        return format_html(f'<a href="/pdf/{obj.id}"><input type="button" style="background-color: #4bbda6;" value="Make PDF"></a>')
 
     def categories(self, obj: Post):  # NOQA
         lst = []
@@ -84,7 +89,8 @@ class AboutAdmin(ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(ModelAdmin):
     list_display = ('comment', 'author', 'post')
-    readonly_fields = ('post', 'author', 'text')
+
+    # readonly_fields = ('post', 'author', 'text')
 
     def comment(self, obj):
         return obj.text[:50] + '...'
