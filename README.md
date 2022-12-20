@@ -20,6 +20,7 @@
 - CKeditor
 - Twilio
 - Django allauth
+![](https://github.com/kelvinconrad/fuse-Blog/blob/main/assets/images/gif/Fuse.gif)
 
 ## Screenshots
 > **Admin page for posts**
