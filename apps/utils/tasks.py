@@ -12,7 +12,10 @@ from root.settings import EMAIL_HOST_USER
 @shared_task
 def send_to_gmail(email, domain, _type='activation'):
     print('ACCEPT TASK')
+    print(email)
     user = User.objects.get(email=email)
+    print(user)
+
     context = {
         'domain': domain,
         'uid': urlsafe_base64_encode(force_bytes(str(user.pk))),

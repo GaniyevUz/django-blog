@@ -40,6 +40,8 @@
 <div class='wrapper'>
     <div class='header'>
         <p class='title'> {{ post.title|safe }} </p>
+        <img height="100" width="100" src="{{ qrcode }}"/>
+
     </div>
     <div>
         {{ post.content|safe }}
