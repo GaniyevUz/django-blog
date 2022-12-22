@@ -8,7 +8,7 @@
  - Generates PDF version of any post that you want (it's comments included)
  - Trending posts witch viewed the most last month
  - Responsive Pangination
- - Posts that Canceled more than 7 days age will be deleted automatically
+ - Posts that Canceled more than 7 days ago will be deleted automatically
  - and more...
 ### Used  Tools & Services
 - Celery
