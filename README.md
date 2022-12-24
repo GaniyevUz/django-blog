@@ -20,6 +20,8 @@
 - CKeditor
 - Twilio
 - Django allauth
+- Ajax
+- Sentry
 
 
 ![](https://github.com/kelvinconrad/fuse-Blog/blob/main/assets/images/gif/Fuse.gif)
