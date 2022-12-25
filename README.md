@@ -1,3 +1,4 @@
+
 # Fuse - Minimalistic Blog Site
 ### Features
  - Login & Registration 
@@ -44,3 +45,5 @@
 > ![](https://telegra.ph/file/e3d2f2b34ca4794e22297.png)
 > **Contact Page with SweetAlert2 alerts**
 > ![](https://telegra.ph/file/7bfff01c8f45ae07f49de.png)
+
+> **Sentr.io errors**![](https://telegra.ph/file/0e45901ed57accae5ab66.png)
