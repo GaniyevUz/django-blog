@@ -1,7 +1,7 @@
 from django.views import View
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, authenticate
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.views import LoginView
 from django.utils.encoding import force_str, force_bytes

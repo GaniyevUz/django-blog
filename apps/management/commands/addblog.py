@@ -1,6 +1,5 @@
 from time import time
 
-from allauth.account.views import account_inactive
 from faker import Faker
 from django.core.management import BaseCommand
 
