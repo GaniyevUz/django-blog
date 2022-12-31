@@ -11,6 +11,8 @@
  - Responsive Pangination
  - Posts that Canceled more than 7 days ago will be deleted automatically
  - and more...
+ 
+ 
 ### Used  Tools & Services
 - Celery
 - Redis
@@ -28,6 +30,8 @@
 ![](https://github.com/kelvinconrad/fuse-Blog/blob/main/assets/images/gif/Fuse.gif)
 
 ## Screenshots
+<details> <summary> <h3>click to open here 👈</h3> </summary>
+ 
 > **Admin page for posts**
 ![](https://telegra.ph/file/3978da03f35f13ba36185.png)
 > **Post edit page added extra button to the bottom**
@@ -47,3 +51,5 @@
 > ![](https://telegra.ph/file/7bfff01c8f45ae07f49de.png)
 
 > **Sentr.io errors**![](https://telegra.ph/file/0e45901ed57accae5ab66.png)
+ 
+ </details>
