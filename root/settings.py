@@ -224,18 +224,18 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
     }
 }
-
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
-
-sentry_sdk.init(
-    dsn="https://391ebafeac5d4cd0b4f8883da103623e@o4504361116368896.ingest.sentry.io/4504361117614080",
-    integrations=[
-        DjangoIntegration(),
-    ],
-    traces_sample_rate=1.0,
-    send_default_pii=True
-)
+#
+# import sentry_sdk
+# from sentry_sdk.integrations.django import DjangoIntegration
+#
+# sentry_sdk.init(
+#     dsn="https://391ebafeac5d4cd0b4f8883da103623e@o4504361116368896.ingest.sentry.io/4504361117614080",
+#     integrations=[
+#         DjangoIntegration(),
+#     ],
+#     traces_sample_rate=1.0,
+#     send_default_pii=True
+# )
 # DJANGORESIZED_DEFAULT_SIZE = [1920, 1080]
 # DJANGORESIZED_DEFAULT_SCALE = 0.5
 # DJANGORESIZED_DEFAULT_QUALITY = 100

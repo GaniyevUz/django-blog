@@ -1,6 +1,3 @@
-https://bitly.com/ ✅
-(1haftadan keyin link larni ochirib tashaydi)
-
 1) blog, admin tomonidan tasdiqlanishi (adminkada status bolishi, active, cancel, pending)
 ckeditor ulanishi ruyhatdan otgan odam blog qosha olishi ✅
 2) /contact xabarlarni adminkada chiqadigan qilish kk, va tagida button(xabar yuborish [pochtasiga yuborilsin]) ✅
@@ -17,12 +14,3 @@ ckeditor ulanishi ruyhatdan otgan odam blog qosha olishi ✅
 
 4. confirm email (one time link) ✅
 5. sms yuborish
-
-e-commerce
-blog-website
-
-
-task olx.uz tayyorlash
-asosiy oynada qidiruv bolishi
-asosiy page 20ta elon
-category

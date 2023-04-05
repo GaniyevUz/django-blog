@@ -33,6 +33,12 @@ class IndexView(ListView):
         context['posts'] = Post.active.all()[1:5]
         return context
 
+    def get(self, request, *args, **kwargs):
+        context = Post.active.exists()
+        if not context:
+            return redirect('create_post')
+        return super().get(request, *args, **kwargs)
+
 
 class PostListView(ListView):
     queryset = Post.active.all()

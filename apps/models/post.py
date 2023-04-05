@@ -11,6 +11,12 @@ class ActivePostsManager(Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status=Post.Status.ACTIVE)
 
+    def first(self):
+        try:
+            return super().first()
+        except Post.DoesNotExist:
+            return None
+
 
 class Post(Model):
     class Status(TextChoices):
