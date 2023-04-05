@@ -29,7 +29,7 @@ class IndexView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
-        context['main_post'] = context['main_post'][0]
+        context['main_post'] = Post.active.first()
         context['url'] = reverse('category')
         context['posts'] = Post.active.all()[1:5]
         return context
