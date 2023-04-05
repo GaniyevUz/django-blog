@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse, path
@@ -67,7 +69,8 @@ class PostAdmin(ModelAdmin):
         return HttpResponseRedirect("./")
 
     def make_pdf(self, obj: Post):
-        return format_html(f'<a href="/pdf/{obj.id}"><input type="button" style="background-color: #4bbda6;" value="Make PDF"></a>')
+        return format_html(
+            f'<a href="/pdf/{obj.id}"><input type="button" style="background-color: #4bbda6;" value="Make PDF"></a>')
 
     def categories(self, obj: Post):  # NOQA
         lst = []
@@ -97,8 +100,9 @@ class CommentAdmin(ModelAdmin):
 
 
 @admin.register(User)
-class UserAdmin(ModelAdmin):
-    pass
+class UserAdmin(UserAdmin):
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active', 'is_superuser')
+    list_filter = ('is_staff', 'is_active', 'is_superuser')
 
 
 @admin.register(Contact)
@@ -122,3 +126,6 @@ class ContactAdmin(ModelAdmin):
                 countdown=5
             )
             return HttpResponseRedirect('../')
+
+
+admin.site.unregister(Group)

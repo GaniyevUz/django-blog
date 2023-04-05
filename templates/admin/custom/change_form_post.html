@@ -1,9 +1,10 @@
 {% extends 'admin/change_form.html' %}
 
-{% block after_related_objects %}
-{#    {{ block.super }}#}
-    <input type="submit" style="background-color: #4bb086; margin: 5px;" value="active" name="status">
-    <input type="submit" style="background-color: #ff0000; margin: 5px;" value="cancel" name="status">
-    <input type="submit" style="background-color: #53a39b; margin: 5px;" value="View Post" name="view">
+{% block submit_buttons_bottom %}
+    <div class="mb-2">
+        <input type="submit" class="btn btn-info mr-2" value="active" name="status">
+        <input type="submit" class="btn btn-danger mr-2" value="cancel" name="status">
+        <input type="submit" class="btn btn-dark text-light" value="View Post" name="view">
+    </div>
     {{ block.super }}
 {% endblock %}
